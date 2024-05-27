@@ -1,0 +1,67 @@
+[
+  {
+    "selector": "node",
+    "style": {
+      "background-color": "#666",
+      "label": "data(shared_name)",
+      "text-valign": "center",
+      "text-halign": "center",
+      "color": "#fff",
+      "text-outline-width": 2,
+      "text-outline-color": "#888z"
+    }
+  },
+  {
+    "selector": "node.highlight",
+    "style": {
+      "background-color": "#F00",
+      "border-color": "#FFF",
+      "border-width": 2
+    }
+  },
+  {
+    "selector": "node.bigger",
+    "style": {
+      "height": "300px",
+      "width:": "300px"
+    }
+  },
+  {
+    "selector": ":parent",
+    "css": {
+      "text-valign": "top",
+      "text-halign": "center",
+      "shape": "round-rectangle",
+      "corner-radius": "10",
+      "padding": 10
+    }
+  },
+  {
+    "selector": "node#e",
+    "css": {
+      "corner-radius": "100",
+      "padding": 0
+    }
+  },
+  {
+    "selector": "edge",
+    "style": {
+      "width": 3,
+      "line-color": "#ccc",
+      "label": "data(shared_name)",
+      "curve-style": "bezier",
+      "target-arrow-color": "#ccc",
+      "target-arrow-shape": "triangle"
+    }
+  },
+  {
+    "selector": "edge.highlight",
+    "style": {
+      "width": 3,
+      "line-color": "#F00",
+      "label": "data(shared_name)",
+      "target-arrow-color": "#F00",
+      "target-arrow-shape": "triangle"
+    }
+  }
+]

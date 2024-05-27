@@ -10,9 +10,13 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "cytoscape": "^3.29.2",
+    "cytoscape-compound-drag-and-drop": "^1.1.0",
     "eslint": "^9.3.0",
     "graphology": "^0.25.4",
     "nuxt": "^3.11.2",
+    "sass": "^1.26.5",
+    "sass-loader": "^10.2.1",
     "sigma": "^3.0.0-beta.18",
     "vue": "^3.4.27",
     "vue-router": "^4.3.2"

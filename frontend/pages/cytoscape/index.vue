@@ -2,16 +2,18 @@
   <h3>CYTOSCAPE</h3>
 
   <cytoscape
-    :node-data="dummyJson.elements"
-    :style-json="styleJson"
+    :node-data="dummy200Json.elements"
+    :style-json="style200Json"
   ></cytoscape>
   <!--</template>-->
 </template>
 
 <script setup lang="ts">
 import Cytoscape from "@comp/cytoscape.vue";
-import dummyJson from "./dummy.json";
-import styleJson from "./style.json";
+import dummy200Json from "./dummy_200.json";
+import dummy1400Json from "./dummy_1400.json";
+import style200Json from "./style_200.json";
+import style1400Json from "./style_1400.json";
 </script>
 
 <style lang="scss"></style>

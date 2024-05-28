@@ -182,14 +182,23 @@ let cy: any = null;
 
 onMounted(() => {
   const cytoscape = nuxtApp.$cytoscape;
+  const container = mmContainer.value;
 
   cy = cytoscape({
-    container: mmContainer.value,
+    container: container,
     elements: props.nodeData,
     style: props.styleJson,
     zoom: 1,
     layout: cytoscapeStore.graphLayouts[props.defaultLayout]
   });
+
+    cy.zoom({
+        // level: 2.0,
+        renderedPosition: {
+            x: container.offsetWidth / 2,
+            y: container.offsetHeight / 2
+        }
+    });
     const cdnd = cy.compoundDragAndDrop(options.value);
 
   cy.elements().forEach((element: any) => {

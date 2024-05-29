@@ -2,66 +2,82 @@
   {
     "selector": "node",
     "style": {
-      "background-color": "#666",
+      "width": "60",
+      "height": "60",
+      "background-color": "data(color)",
       "label": "data(label)",
       "text-valign": "center",
       "text-halign": "center",
-      "color": "#fff",
-      "text-outline-width": 2,
-      "text-outline-color": "#888z"
+      "color": "#333",
+      "font-size": "10",
+      "border-color": "#333",
+      "border-width": "2",
+      "z-index": 1,
+      "text-wrap": "ellipsis",
+      "text-max-width": "40px"
     }
   },
   {
     "selector": "node.highlight",
     "style": {
-      "background-color": "#F00",
-      "border-color": "#FFF",
-      "border-width": 2
+      "font-size": "12",
+      "z-index": 2
     }
   },
   {
-    "selector": "node.bigger",
+    "selector": "node.notSelected",
     "style": {
-      "height": "300px",
-      "width:": "300px"
+      "background-blacken": -0.5,
+      "border-opacity": 0.5,
+      "font-size": "10",
+      "text-opacity": 0.5,
+      "z-index": 0
     }
   },
   {
-    "selector": ":parent",
-    "css": {
-      "text-valign": "top",
-      "text-halign": "center",
-      "shape": "round-rectangle",
-      "corner-radius": "10",
-      "padding": 10
-    }
-  },
-  {
-    "selector": "node#e",
-    "css": {
-      "corner-radius": "100",
-      "padding": 0
+    "selector": "node.mouseHover",
+    "style": {
+      "font-size": "12",
+      "text-wrap": "wrap"
     }
   },
   {
     "selector": "edge",
     "style": {
-      "width": 3,
-      "line-color": "#ccc",
+      "width": 1,
+      "line-color": "#333",
       "label": "data(id)",
       "curve-style": "bezier",
-      "target-arrow-color": "#ccc",
-      "target-arrow-shape": "triangle"
+      "target-arrow-color": "#333",
+      "target-arrow-shape": "triangle",
+      "font-size": "10",
+      "color": "#5F5E5E",
+      "z-index": 1
     }
   },
   {
     "selector": "edge.highlight",
     "style": {
-      "width": 3,
-      "line-color": "#F00",
-      "label": "data(label)",
-      "target-arrow-color": "#F00",
-      "target-arrow-shape": "triangle"
+      "width": 2,
+      "z-index": 2,
+      "font-size": "12",
+      "arrow-scale": 1.2
+    }
+  },
+  {
+    "selector": "edge.notSelected",
+    "style": {
+      "line-opacity": 0.5,
+      "text-opacity": 0.5,
+      "z-index": 0
+    }
+  },
+  {
+    "selector": "edge.mouseHover",
+    "style": {
+      "font-size": "12",
+      "width": 2,
+      "arrow-scale": 1.2
     }
   }
 ]

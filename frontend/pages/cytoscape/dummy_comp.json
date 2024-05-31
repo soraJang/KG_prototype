@@ -1,0 +1,25 @@
+{
+  "elements": {
+    "nodes": [
+      {
+        "data": { "id": "a", "parent": "b" },
+        "position": { "x": 250, "y": 85 }
+      },
+      { "data": { "id": "b" } },
+      {
+        "data": { "id": "c", "parent": "b" },
+        "position": { "x": 300, "y": 85 }
+      },
+      { "data": { "id": "e" } },
+      {
+        "data": { "id": "f", "parent": "e" },
+        "position": { "x": 300, "y": 175 }
+      },
+      {
+        "data": { "id": "g", "parent": "e" },
+        "position": { "x": 350, "y": 175 }
+      }
+    ],
+    "edges": [{ "data": { "id": "eb", "source": "b", "target": "e" } }]
+  }
+}

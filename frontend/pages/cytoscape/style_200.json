@@ -18,6 +18,20 @@
     }
   },
   {
+    "selector": ":parent",
+    "style": {
+      "text-valign": "top",
+      "text-halign": "center",
+      "shape": "rectangle",
+      "background-color": "#bbb",
+      "text-outline-color": "#aaa",
+      "width": "16px",
+      "height": "16px",
+      "font-size": "14px",
+      "z-index": "1"
+    }
+  },
+  {
     "selector": "node.highlight",
     "style": {
       "font-size": "12",

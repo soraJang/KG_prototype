@@ -1,0 +1,38 @@
+[
+  {
+    "selector": "node",
+    "css": {
+      "content": "data(id)",
+      "text-valign": "center",
+      "text-halign": "center"
+    }
+  },
+  {
+    "selector": ":parent",
+    "css": {
+      "text-valign": "top",
+      "text-halign": "center",
+      "shape": "round-rectangle",
+      "corner-radius": "50",
+      "padding": 10,
+      "border-color": "red",
+      "width" : "200px",
+      "height" : "200px"
+    }
+  },
+  {
+    "selector": "node#b",
+    "css": {
+      "width": "200px",
+      "height": "200px",
+      "border-radius": "50%"
+    }
+  },
+  {
+    "selector": "edge",
+    "css": {
+      "curve-style": "bezier",
+      "target-arrow-shape": "triangle"
+    }
+  }
+]

@@ -17,11 +17,13 @@
 
 <script setup lang="ts">
 import { ref, onMounted, defineProps } from "vue";
+import { useCytoscapeStore } from "~/store/useCytoscapeStore";
+import Filter from "~/components/units/filter.vue";
+import SelectLayout from "~/components/units/selectLayout.vue";
 
 const nuxtApp = useNuxtApp();
 
-import Filter from "./units/filter.vue";
-import SelectLayout from "./units/selectLayout.vue";
+const cytoscapeStore = useCytoscapeStore();
 
 const props = defineProps({
   defaultLayout: {
@@ -73,9 +75,7 @@ onMounted(() => {
     elements: props.nodeData,
     style: props.styleJson,
     zoom: 1,
-    layout: {
-      name: props.defaultLayout
-    }
+    layout: cytoscapeStore.graphLayouts[props.defaultLayout]
   });
 
   cy.elements().forEach((element: any) => {
@@ -185,9 +185,9 @@ const setNodeView = (id: string, isUnChecked: boolean) => {
   });
 };
 
-const setGraphLayout = (options: object) => {
+const setGraphLayout = (layout: object) => {
   if (cy) {
-    cy.layout(options).run();
+    cy.layout(layout).run();
   } else {
     console.error("fail");
   }

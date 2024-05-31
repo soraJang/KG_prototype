@@ -18,6 +18,7 @@
 <script setup lang="ts">
 import { ref, onMounted, defineProps } from "vue";
 import { useCytoscapeStore } from "~/store/useCytoscapeStore";
+import CONSTANTS from "~/constants/constants";
 import Filter from "~/components/units/filter.vue";
 import SelectLayout from "~/components/units/selectLayout.vue";
 
@@ -99,11 +100,11 @@ onMounted(() => {
     if (evtTarget === cy) {
       cy.elements().forEach((element: any) => {
         if (element.isNode()) {
-          element.removeClass("highlight");
-          element.removeClass("notSelected");
+          element.removeClass(CONSTANTS.HIGHLIGHT);
+          element.removeClass(CONSTANTS.NOT_SELECTED);
         } else if (element.isEdge()) {
-          element.removeClass("highlight");
-          element.removeClass("notSelected");
+          element.removeClass(CONSTANTS.HIGHLIGHT);
+          element.removeClass(CONSTANTS.NOT_SELECTED);
         }
       });
     }
@@ -114,14 +115,14 @@ onMounted(() => {
 
     highlightedNodeId.value.push(evtTarget.id());
 
-    cy.elements().removeClass("notSelected");
-    evtTarget.addClass("highlight");
+    cy.elements().removeClass(CONSTANTS.NOT_SELECTED);
+    evtTarget.addClass(CONSTANTS.HIGHLIGHT);
 
     cy.elements().forEach((element: any) => {
       if (element.isNode() && element !== evtTarget) {
-        element.addClass("notSelected");
+        element.addClass(CONSTANTS.NOT_SELECTED);
       } else if (element.isEdge()) {
-        element.addClass("notSelected");
+        element.addClass(CONSTANTS.NOT_SELECTED);
       }
     });
   });
@@ -133,38 +134,38 @@ onMounted(() => {
 
     highlightedNodeId.value.push(startNode.id(), endNode.id());
 
-    cy.elements().removeClass("notSelected");
-    evtTarget.addClass("highlight");
-    startNode.addClass("highlight");
-    endNode.addClass("highlight");
+    cy.elements().removeClass(CONSTANTS.NOT_SELECTED);
+    evtTarget.addClass(CONSTANTS.HIGHLIGHT);
+    startNode.addClass(CONSTANTS.HIGHLIGHT);
+    endNode.addClass(CONSTANTS.HIGHLIGHT);
 
     cy.elements().forEach((element: any) => {
       if (element.isNode() && element !== startNode && element !== endNode) {
-        element.addClass("notSelected");
+        element.addClass(CONSTANTS.NOT_SELECTED);
       } else if (element.isEdge() && element !== evtTarget) {
-        element.addClass("notSelected");
+        element.addClass(CONSTANTS.NOT_SELECTED);
       }
     });
   });
 
   cy.on("mouseover", "node", (event: any) => {
     let evtTarget = event.target;
-    evtTarget.addClass("mouseHover");
+    evtTarget.addClass(CONSTANTS.MOUSE_HOVER);
   });
 
   cy.on("mouseout", "node", (event: any) => {
     let evtTarget = event.target;
-    evtTarget.removeClass("mouseHover");
+    evtTarget.removeClass(CONSTANTS.MOUSE_HOVER);
   });
 
   cy.on("mouseover", "edge", (event: any) => {
     let evtTarget = event.target;
-    evtTarget.addClass("mouseHover");
+    evtTarget.addClass(CONSTANTS.MOUSE_HOVER);
   });
 
   cy.on("mouseout", "edge", (event: any) => {
     let evtTarget = event.target;
-    evtTarget.removeClass("mouseHover");
+    evtTarget.removeClass(CONSTANTS.MOUSE_HOVER);
   });
 });
 

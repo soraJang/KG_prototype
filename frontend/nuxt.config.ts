@@ -5,6 +5,9 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   alias: {
     "@": "/",
-    "@comp": "/components"
-  }
+    "@comp": "/components",
+    "@cons": "/constants",
+    "@store": "/store"
+  },
+  modules: ["@pinia/nuxt"]
 });

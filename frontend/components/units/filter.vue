@@ -1,39 +1,84 @@
 <template>
-  <div class="filter-wrap">
-    ** filter toggle 처리 해야함.
-    <template v-for="(f, fi) in filters">
-      <div>
-        <button v-key="`filter_btn_${fi}`" @click="filterClick(f, fi)">
-          {{ f.name }} {{ btnStatus[fi] }}
+  <div class="filter">
+    <h4>Filter</h4>
+    <ul class="filter-list">
+      <li class="filter-item" v-for="(item, index) in filters">
+        <button
+          class="filter-button"
+          :key="`filter_btn_${index}`"
+          :class="[
+            item.isUnChecked ? 'filter-button--unchecked' : '',
+            highlightedNodeId.length !== 0 &&
+            !highlightedNodeId.includes(item.id)
+              ? 'filter-button--unhighlighted'
+              : ''
+          ]"
+          :style="{ background: item.color }"
+          @click="
+            [(item.isUnChecked = !item.isUnChecked), getCheckedItem(item)]
+          "
+        >
+          {{ item.label }}
         </button>
-      </div>
-    </template>
+      </li>
+    </ul>
   </div>
 </template>
 
 <script setup lang="ts">
-const btnStatus = ref([]);
+import { defineProps, defineEmits } from "vue";
 
 const props = defineProps({
   filters: {
     type: Array,
-    required: false,
-    defaults: () => {
-      return [{ name: "a" }, { name: "b" }];
-    }
+    required: true
+  },
+  highlightedNodeId: {
+    type: Array,
+    required: true
   }
 });
 
-const filterClick = (obj: object, fi: number) => {
-  btnStatus[fi] = !btnStatus[fi];
+const emit = defineEmits(["setNodeView"]);
+
+const getCheckedItem = (item: any) => {
+  emit("setNodeView", item.id, item.isUnChecked);
 };
 </script>
 
 <style lang="scss">
-div.filter-wrap {
+.filter {
+  z-index: 999;
   width: 300px;
   min-height: 400px;
   position: absolute;
-  right: 0px;
+  right: 16px;
+
+  &-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  &-item {
+    width: 100%;
+  }
+  &-button {
+    width: 100%;
+    height: 24px;
+    filter: contrast(1) brightness(1);
+
+    &:hover {
+      filter: brightness(1.2);
+    }
+
+    &--unchecked {
+      background: white !important;
+      border: 1px solid #333;
+    }
+
+    &--unhighlighted {
+      filter: contrast(0.3) brightness(1.5);
+    }
+  }
 }
 </style>

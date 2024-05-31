@@ -4,7 +4,7 @@
   <cytoscape
     :node-data="dummy200Json.elements"
     :style-json="cytoscapeStore.graphStyle"
-    :default-layout="'random'"
+    :default-layout="'cola'"
   ></cytoscape>
 </template>
 

@@ -1,16 +1,18 @@
 <template>
-  <Top v-if="useTop" class="part top"></Top>
-  <Filter
-    v-if="useFilter"
-    :filters="filters"
-    :highlighted-node-id="highlightedNodeId"
-    @set-node-view="setNodeView"
-  ></Filter>
-  <MouseOption class="part">마우스 우클릭</MouseOption>
-  <ControlBtn v-if="useControlBtn" class="part setting"
-    >하단 아래 설정 아이콘
-  </ControlBtn>
-  <div id="cy" ref="mmContainer" style="width: 1400px; height: 1000px"></div>
+  <div>
+    <SelectLayout
+      v-if="useTop"
+      :default-layout="defaultLayout"
+      @set-graph-layout="setGraphLayout"
+    ></SelectLayout>
+    <Filter
+      v-if="useFilter"
+      :filters="filters"
+      :highlighted-node-id="highlightedNodeId"
+      @set-node-view="setNodeView"
+    ></Filter>
+    <div id="cy" ref="mmContainer" style="width: 1400px; height: 1000px"></div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -19,11 +21,13 @@ import { ref, onMounted, defineProps } from "vue";
 const nuxtApp = useNuxtApp();
 
 import Filter from "./units/filter.vue";
-import Top from "./units/top.vue";
-import MouseOption from "./units/mouse-option.vue";
-import ControlBtn from "./units/control-btn.vue";
+import SelectLayout from "./units/selectLayout.vue";
 
 const props = defineProps({
+  defaultLayout: {
+    type: String,
+    required: true
+  },
   nodeData: {
     type: Object,
     required: true
@@ -70,7 +74,7 @@ onMounted(() => {
     style: props.styleJson,
     zoom: 1,
     layout: {
-      name: "preset"
+      name: props.defaultLayout
     }
   });
 
@@ -164,7 +168,7 @@ onMounted(() => {
   });
 });
 
-let getRandomColor = () => {
+const getRandomColor = () => {
   let color_r = Math.floor(Math.random() * 127 + 115).toString(16);
   let color_g = Math.floor(Math.random() * 127 + 115).toString(16);
   let color_b = Math.floor(Math.random() * 127 + 115).toString(16);
@@ -180,6 +184,14 @@ const setNodeView = (id: string, isUnChecked: boolean) => {
     }
   });
 };
+
+const setGraphLayout = (options: object) => {
+  if (cy) {
+    cy.layout(options).run();
+  } else {
+    console.error("fail");
+  }
+};
 </script>
 
 <style lang="scss">
@@ -190,6 +202,14 @@ li {
   list-style: none;
 }
 
+button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
 .part {
   border: 1px solid red;
 }

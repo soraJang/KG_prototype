@@ -4,6 +4,7 @@
   <cytoscape
     :node-data="dummy200Json.elements"
     :style-json="style200Json"
+    :default-layout="'preset'"
   ></cytoscape>
   <!--</template>-->
 </template>

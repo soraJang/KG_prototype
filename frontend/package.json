@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "cytoscape": "^3.29.2",
+    "cytoscape-cola": "^2.5.1",
     "cytoscape-compound-drag-and-drop": "^1.1.0",
     "eslint": "^9.3.0",
     "graphology": "^0.25.4",

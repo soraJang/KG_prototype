@@ -64,14 +64,7 @@ const getCheckedItem = (item: any) => {
   }
   &-button {
     width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     height: 24px;
-    border-radius: 4px;
-    cursor: pointer;
-    border: none;
-    outline: none;
     filter: contrast(1) brightness(1);
 
     &:hover {
@@ -84,7 +77,7 @@ const getCheckedItem = (item: any) => {
     }
 
     &--unhighlighted {
-      filter: contrast(0.4) brightness(1.5);
+      filter: contrast(0.3) brightness(1.5);
     }
   }
 }

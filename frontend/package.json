@@ -10,13 +10,13 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@pinia/nuxt": "^0.5.1",
     "cytoscape": "^3.29.2",
     "cytoscape-cola": "^2.5.1",
     "cytoscape-compound-drag-and-drop": "^1.1.0",
     "eslint": "^9.3.0",
     "graphology": "^0.25.4",
     "nuxt": "^3.11.2",
-    "pinia": "^2.1.7",
     "sass": "^1.26.5",
     "sass-loader": "^10.2.1",
     "sigma": "^3.0.0-beta.18",

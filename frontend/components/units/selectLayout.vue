@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { defineProps, defineEmits, ref } from "vue";
-import { useCytoscapeStore } from "~/store/useCytoscapeStore";
+import { useCytoscapeStore } from "@store/useCytoscapeStore";
 
 const cytoscapeStore = useCytoscapeStore();
 

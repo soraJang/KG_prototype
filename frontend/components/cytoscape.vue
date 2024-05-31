@@ -17,10 +17,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted, defineProps } from "vue";
-import { useCytoscapeStore } from "~/store/useCytoscapeStore";
-import CONSTANTS from "~/constants/constants";
-import Filter from "~/components/units/filter.vue";
-import SelectLayout from "~/components/units/selectLayout.vue";
+import { useCytoscapeStore } from "@store/useCytoscapeStore";
+import CONSTANTS from "@cons/constants";
+import Filter from "@comp/units/filter.vue";
+import SelectLayout from "@comp/units/selectLayout.vue";
 
 const nuxtApp = useNuxtApp();
 

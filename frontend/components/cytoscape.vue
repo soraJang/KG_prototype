@@ -22,7 +22,7 @@ import { useCytoscapeStore } from "@store/useCytoscapeStore";
 import CONSTANTS from "@cons/constants";
 import Filter from "@comp/units/filter.vue";
 import SelectLayout from "@comp/units/selectLayout.vue";
-import useCytoscapeDragOpt from "../composables/cytoscape/dragOpt";
+import useCytoscapeDragOpt from "@composables/cytoscape/dragOpt";
 
 const nuxtApp = useNuxtApp();
 
@@ -241,6 +241,12 @@ onMounted(() => {
   cy.on("mouseout", "edge", (event: any) => {
     let evtTarget = event.target;
     evtTarget.removeClass(CONSTANTS.MOUSE_HOVER);
+  });
+
+  cy.dblclick(200);
+
+  cy.on("dblclick", (event: any) => {
+    console.log(event.target);
   });
 });
 

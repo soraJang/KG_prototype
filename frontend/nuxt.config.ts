@@ -7,7 +7,8 @@ export default defineNuxtConfig({
     "@": "/",
     "@comp": "/components",
     "@cons": "/constants",
-    "@store": "/store"
+    "@store": "/store",
+    "@composables": "/composables"
   },
   modules: ["@pinia/nuxt"]
 });

@@ -31,7 +31,7 @@ export const useCytoscapeStore = defineStore("cytoscape", {
           "background-color": "#bbb",
           "text-outline-color": "#aaa",
           "corner-radius": "50",
-          padding: 50,
+          padding: 10,
           width: "16px",
           height: "16px",
           "font-size": "14px",
@@ -110,7 +110,7 @@ export const useCytoscapeStore = defineStore("cytoscape", {
       grid: {
         name: "grid",
 
-        fit: true,
+        fit: false,
         padding: 30,
         boundingBox: undefined,
         avoidOverlap: true,
@@ -137,7 +137,7 @@ export const useCytoscapeStore = defineStore("cytoscape", {
       circle: {
         name: "circle",
 
-        fit: true,
+        fit: false,
         padding: 30,
         boundingBox: undefined,
         avoidOverlap: true,
@@ -167,7 +167,7 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         refresh: 1, // 프레임당 틱 수; 높을수록 빠르지만 더 불안정해짐
         maxSimulationTime: 100, // 레이아웃을 실행할 최대 시간(ms)
         ungrabifyWhileSimulating: true, // 레이아웃 중 노드를 드래그할 수 없게 함
-        fit: true, // 레이아웃 위치 조정 시 뷰포트를 맞춤
+        fit: false, // 레이아웃 위치 조정 시 뷰포트를 맞춤
         padding: 30, // 시뮬레이션 주위의 여백
         boundingBox: {
           x1: 0,
@@ -338,7 +338,7 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         // Easing of animation, if enabled
         animationEasing: undefined,
         // Fit the viewport to the repositioned nodes
-        fit: true,
+        fit: false,
         // Padding around layout
         padding: 30,
         // Whether to include labels in node dimensions. Valid in "proof" quality

@@ -19,6 +19,7 @@
           "
         >
           {{ item.label }}
+          {{ item.childCount != 0 ? `(${item.childCount})` : "" }}
         </button>
       </li>
     </ul>
@@ -66,6 +67,7 @@ const getCheckedItem = (item: any) => {
     width: 100%;
     height: 24px;
     filter: contrast(1) brightness(1);
+    font-weight: bold;
 
     &:hover {
       filter: brightness(1.2);

@@ -66,6 +66,7 @@ interface Filter {
   label: string;
   color: string;
   isUnChecked: boolean;
+  childCount: number;
 }
 
 const hideNodeList = ref([]);
@@ -84,7 +85,8 @@ const setFilters = () => {
         id: el.id(),
         label: el.data().label,
         color: el.data("colorCode"),
-        isUnChecked: false
+        isUnChecked: false,
+        childCount: el.children().length
       });
     }
   });
@@ -180,19 +182,12 @@ onMounted(() => {
     }
   });
 
-  // ids.forEach((id) => {
-  //   cy.automove({
-  //     nodesMatching: cy.$(`#${id}`),
-  //     reposition: "viewport"
-  //   });
-  // });
-
   setFilters();
 
-  cy.elements().forEach((e) => {
+  cy.elements().forEach((element: any) => {
     // 자식노드일때, 부모노드에 설정해두었던 색상코드를 일괄적용한다.
-    if (e.isChild()) {
-      e.style("background-color", e.parent().data("childColor"));
+    if (element.isChild()) {
+      element.style("background-color", element.parent().data("childColor"));
     }
   });
 

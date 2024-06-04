@@ -276,18 +276,16 @@ onMounted(() => {
   /**
    * canvas? 를 drag 할때, 동작하는 event 인데
    * 맨 처음 canvas 를 그릴때 중심 기준으로 위치를 잡음
-   * -> 노드 위치가 바꾸니다고 해서, canvas 의 중심 위치가 바뀌지 않음.
+   * -> 노드 위치가 바뀐다고 해서, canvas 의 중심 위치가 바뀌지 않음.
    * 그러니까 정확하게 하려면? 노드 위치가 바뀔때마다 중심 위치를 계산해서.. 어쩌고..
    */
   cy.on("dragpan", (e, a, b, c) => {
-    // const el = e.target;
-    // const x = el.pan().x;
-    // const y = el.pan().y;
-    //
-    // if (x < 0 || y < 0) {
-    //   // event.preventDefault();
-    //   // return;
-    // }
+    const el = e.target;
+
+    // el.nodes().forEach((n) => {
+    //   // const { x1, x2, y1, y2 } = n.renderedBoundingBox();
+    // });
+
     // // console.log(`${x} | ${y}`);
     // // cy.viewport({ pan: { x: x < 0 ? 0 : x, y: y < 0 ? 0 : y } });
   });

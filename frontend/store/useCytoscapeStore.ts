@@ -112,7 +112,12 @@ export const useCytoscapeStore = defineStore("cytoscape", {
 
         fit: false,
         padding: 30,
-        boundingBox: undefined,
+        boundingBox: {
+          x1: 0,
+          y1: 0,
+          x2: 1400,
+          y2: 1000
+        },
         avoidOverlap: true,
         avoidOverlapPadding: 10,
         nodeDimensionsIncludeLabels: false,
@@ -139,7 +144,12 @@ export const useCytoscapeStore = defineStore("cytoscape", {
 
         fit: false,
         padding: 30,
-        boundingBox: undefined,
+        boundingBox: {
+          x1: 0,
+          y1: 0,
+          x2: 1400,
+          y2: 1000
+        },
         avoidOverlap: true,
         nodeDimensionsIncludeLabels: false,
         spacingFactor: undefined,
@@ -172,8 +182,8 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         boundingBox: {
           x1: 0,
           y1: 0,
-          x2: 500,
-          y2: 500
+          x2: 1400,
+          y2: 1000
         }, // 레이아웃 경계를 제한함; { x1, y1, x2, y2 } 또는 { x1, y1, w, h } 형식
         nodeDimensionsIncludeLabels: false, // 노드가 사용하는 공간을 결정할 때 레이블을 포함할지 여부
 
@@ -215,7 +225,12 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         clockwise: true,
         equidistant: false,
         minNodeSpacing: 10,
-        boundingBox: undefined,
+        boundingBox: {
+          x1: 0,
+          y1: 0,
+          x2: 1400,
+          y2: 1000
+        },
         avoidOverlap: true,
         nodeDimensionsIncludeLabels: false,
         height: undefined,
@@ -244,7 +259,12 @@ export const useCytoscapeStore = defineStore("cytoscape", {
 
         fit: true,
         padding: 30,
-        boundingBox: undefined,
+        boundingBox: {
+          x1: 0,
+          y1: 0,
+          x2: 1400,
+          y2: 1000
+        },
         animate: true,
         animationDuration: 500,
         animationEasing: "ease-in",
@@ -266,7 +286,12 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         circle: false,
         grid: false,
         spacingFactor: 1.75,
-        boundingBox: undefined,
+        boundingBox: {
+          x1: 0,
+          y1: 0,
+          x2: 1400,
+          y2: 1000
+        },
         avoidOverlap: true,
         nodeDimensionsIncludeLabels: false,
         roots: undefined,
@@ -299,7 +324,12 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         refresh: 20,
         fit: true,
         padding: 30,
-        boundingBox: undefined,
+        boundingBox: {
+          x1: 0,
+          y1: 0,
+          x2: 1400,
+          y2: 1000
+        },
         nodeDimensionsIncludeLabels: false,
         randomize: false,
         componentSpacing: 40,

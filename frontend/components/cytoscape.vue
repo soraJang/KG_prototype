@@ -70,6 +70,7 @@ interface Filter {
 
 const hideNodeList = ref([]);
 const filterList = ref([]);
+const layoutObj = ref({});
 
 const mmContainer = ref(null);
 const filters = ref<Filter[]>([]);
@@ -92,22 +93,22 @@ const setFilters = () => {
 onMounted(() => {
   const cytoscape = nuxtApp.$cytoscape;
   const container = mmContainer.value;
+  layoutObj.value = cytoscapeStore.graphLayouts[props.defaultLayout];
 
   cy = cytoscape({
     container: container,
     elements: props.nodeData,
     style: props.styleJson,
+    layout: layoutObj.value,
     zoom: 1,
-    layout: cytoscapeStore.graphLayouts[props.defaultLayout]
-  });
-
-  cy.zoom({
-    // level: 2.0,
-    renderedPosition: {
-      x: container.offsetWidth / 2,
-      y: container.offsetHeight / 2
+    pan: {
+      x: 0,
+      y: 0
     }
   });
+  // cy.viewport({
+  //   zoom: 0.1
+  // });
   const cdnd = cy.compoundDragAndDrop(option.value);
 
   // 부모 노드 tag 추가
@@ -272,6 +273,25 @@ onMounted(() => {
     evtTarget.removeClass(CONSTANTS.MOUSE_HOVER);
   });
 
+  /**
+   * canvas? 를 drag 할때, 동작하는 event 인데
+   * 맨 처음 canvas 를 그릴때 중심 기준으로 위치를 잡음
+   * -> 노드 위치가 바꾸니다고 해서, canvas 의 중심 위치가 바뀌지 않음.
+   * 그러니까 정확하게 하려면? 노드 위치가 바뀔때마다 중심 위치를 계산해서.. 어쩌고..
+   */
+  cy.on("dragpan", (e, a, b, c) => {
+    // const el = e.target;
+    // const x = el.pan().x;
+    // const y = el.pan().y;
+    //
+    // if (x < 0 || y < 0) {
+    //   // event.preventDefault();
+    //   // return;
+    // }
+    // // console.log(`${x} | ${y}`);
+    // // cy.viewport({ pan: { x: x < 0 ? 0 : x, y: y < 0 ? 0 : y } });
+  });
+
   // dbl click 간격?
   cy.dblclick(100);
   cy.on("dblclick", (evt: any) => {
@@ -290,11 +310,14 @@ onMounted(() => {
     if (el.isParent()) {
       el.children().style("background-color", el.style("background-color"));
 
-      const newEdges = createNewEdge(el.children(), getTarget(el));
-      cy.add(newEdges);
+      // 상위노드의 edge 정보를 자식에도 추가
+      cy.add(createNewEdge(el.children(), getTarget(el)));
+      // 상위-하위 연결을 끊음 (부모정보 삭제)
       el.children().move({ parent: null });
-      // el.remove();
+      // 상위 노드는 더이상 사용하지 않기때문에 숨김처리 (삭제시에 상위노드가 '노드'로 남는 현상 등 오류가 있어 숨김처리 함)
       el.hide();
+
+      layoutRun();
     }
   });
 });
@@ -316,18 +339,23 @@ const setNodeView = (id: string, isUnChecked: boolean) => {
     }
   }
 
-  cy.elements().forEach((element: any) => {
-    if (element.isNode()) {
-      if (element.id() === id) {
-        isUnChecked ? element.hide() : element.show();
-      }
-    }
+  const el = cy.getElementById(id);
+  isUnChecked ? el.hide() : el.show();
+
+  // 선택한 노드를 부모로 가지고 있는 노드도 처리해준다.
+  const children = getChild(cy, el);
+  children.forEach((c) => {
+    isUnChecked ? c.hide() : c.show();
   });
 };
 
 const setGraphLayout = (layout: object) => {
+  layoutObj.value = layout;
+  layoutRun();
+};
+const layoutRun = () => {
   if (cy) {
-    cy.layout(layout).run();
+    cy.layout(layoutObj.value).run();
   } else {
     console.error("fail");
   }
@@ -350,8 +378,11 @@ button {
   border: none;
   outline: none;
 }
-.part {
+.part,
+#cy {
   border: 1px solid red;
+}
+#cy {
 }
 
 p.htmlTag.hide {

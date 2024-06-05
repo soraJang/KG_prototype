@@ -111,6 +111,11 @@ onMounted(() => {
   // });
   const cdnd = cy.compoundDragAndDrop(option.value);
 
+  // 여기서 node 에 대한 automove 를 설정하고 싶으나,
+  // 설정이 잘못되었는지 무한루프가 돌아버려서 저 아래서 각각의 node 에 추가해주기로 한다.
+  // 사용은 아래처럼 하고, defaultOption 등을 다른 파일로 관리해도 됨.
+  // let rule = cy.automove({});
+
   // 부모 노드 tag 추가
   cy.nodeHtmlLabel([
     {
@@ -151,6 +156,12 @@ onMounted(() => {
 
     // Node 일때
     if (el.isNode()) {
+      // 노드일때, viewport 밖으로 이동할수 없게 처리해준다.
+      cy.automove({
+        nodesMatching: cy.$(`#${el.data().id}`),
+        reposition: "viewport"
+      });
+
       filterList.value.push(el);
       el.data("colorCode", colorCode);
 
@@ -168,6 +179,14 @@ onMounted(() => {
       // edge 일때
     }
   });
+
+  // ids.forEach((id) => {
+  //   cy.automove({
+  //     nodesMatching: cy.$(`#${id}`),
+  //     reposition: "viewport"
+  //   });
+  // });
+
   setFilters();
 
   cy.elements().forEach((e) => {
@@ -276,18 +295,22 @@ onMounted(() => {
   /**
    * canvas? 를 drag 할때, 동작하는 event 인데
    * 맨 처음 canvas 를 그릴때 중심 기준으로 위치를 잡음
-   * -> 노드 위치가 바꾸니다고 해서, canvas 의 중심 위치가 바뀌지 않음.
+   * -> 노드 위치가 바뀐다고 해서, canvas 의 중심 위치가 바뀌지 않음.
    * 그러니까 정확하게 하려면? 노드 위치가 바뀔때마다 중심 위치를 계산해서.. 어쩌고..
    */
   cy.on("dragpan", (e, a, b, c) => {
-    // const el = e.target;
-    // const x = el.pan().x;
-    // const y = el.pan().y;
-    //
-    // if (x < 0 || y < 0) {
-    //   // event.preventDefault();
-    //   // return;
-    // }
+    const el = e.target;
+
+    // TODO: 여기서 graph 자체에 rule 을 걸고 싶은데 그게 안되는것 같음.
+    // cy.automove({
+    //   nodesMatching: el,
+    //   reposition: "viewport"
+    // });
+
+    // el.nodes().forEach((n) => {
+    //   // const { x1, x2, y1, y2 } = n.renderedBoundingBox();
+    // });
+
     // // console.log(`${x} | ${y}`);
     // // cy.viewport({ pan: { x: x < 0 ? 0 : x, y: y < 0 ? 0 : y } });
   });

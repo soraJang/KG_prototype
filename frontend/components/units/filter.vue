@@ -53,6 +53,7 @@ const getCheckedItem = (item: any) => {
   width: 300px;
   min-height: 400px;
   position: absolute;
+  top: 16px;
   right: 16px;
 
   &-list {

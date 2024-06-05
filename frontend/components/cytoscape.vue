@@ -12,7 +12,11 @@
       @set-node-view="setNodeView"
     ></Filter>
 
-    <div id="cy" ref="mmContainer" style="width: 1400px; height: 1000px"></div>
+    <div
+      id="cy"
+      ref="mmContainer"
+      style="width: calc(100% - 400px); height: 800px; border: 1px solid #ddd"
+    ></div>
   </div>
 </template>
 
@@ -23,13 +27,15 @@ import CONSTANTS from "@cons/constants";
 import Filter from "@comp/units/filter.vue";
 import SelectLayout from "@comp/units/selectLayout.vue";
 import useCytoscapeDragOpt from "@composables/cytoscape/dragOpt";
-
 const { option, getTarget, createNewEdge, getChild, getSibling, getParent } =
   useCytoscapeDragOpt();
-
-const nuxtApp = useNuxtApp();
-
-const cytoscapeStore = useCytoscapeStore();
+interface Filter {
+  id: string;
+  label: string;
+  color: string;
+  isUnChecked: boolean;
+  childCount: number;
+}
 
 const props = defineProps({
   defaultLayout: {
@@ -61,22 +67,17 @@ const props = defineProps({
   }
 });
 
-interface Filter {
-  id: string;
-  label: string;
-  color: string;
-  isUnChecked: boolean;
-  childCount: number;
-}
-
+const nuxtApp = useNuxtApp();
+const cytoscapeStore = useCytoscapeStore();
 const hideNodeList = ref([]);
 const filterList = ref([]);
 const layoutObj = ref({});
-
+const parentColorObj = ref({});
 const mmContainer = ref(null);
 const filters = ref<Filter[]>([]);
 let highlightedNodeId = ref([]);
 let cy: any = null;
+let refinedLayoutData = ref({});
 
 const setFilters = () => {
   filterList.value.forEach((el) => {
@@ -108,6 +109,19 @@ onMounted(() => {
       y: 0
     }
   });
+
+  // layout
+  const initLayout = cytoscapeStore.graphLayouts[props.defaultLayout];
+  // isChild 인 node를 제외하고 layout이 적용되도록 새로 담기
+  const nodesToLayout = cy.nodes().filter((node: any) => !node.isChild());
+  const edgesToLayout = cy.edges();
+  refinedLayoutData = nodesToLayout.union(edgesToLayout);
+
+  const layoutOptions = {
+    ...initLayout,
+    eles: refinedLayoutData
+  };
+  cy.layout(layoutOptions).run();
   // cy.viewport({
   //   zoom: 0.1
   // });
@@ -189,8 +203,22 @@ onMounted(() => {
     if (element.isChild()) {
       element.style("background-color", element.parent().data("childColor"));
     }
-  });
 
+    if (element.isParent()) {
+      const children = element.children();
+
+      children
+        .layout({
+          name: "circle",
+          fit: false,
+          spacingFactor: 0.3
+        })
+        .run();
+
+      // TODO: x, y 축 위치 temp 이므로, 추후 수정 필요
+      element.position({ x: 160, y: 40 });
+    }
+  });
   cy.on("tap", (event: any) => {
     let evtTarget = event.target;
 
@@ -373,7 +401,11 @@ const setGraphLayout = (layout: object) => {
 };
 const layoutRun = () => {
   if (cy) {
-    cy.layout(layoutObj.value).run();
+    const layoutOptions = {
+      ...layoutObj.value,
+      eles: refinedLayoutData
+    };
+    cy.layout(layoutOptions).run();
   } else {
     console.error("fail");
   }
@@ -399,8 +431,6 @@ button {
 .part,
 #cy {
   border: 1px solid red;
-}
-#cy {
 }
 
 p.htmlTag.hide {

@@ -6,8 +6,8 @@ export const useCytoscapeStore = defineStore("cytoscape", {
       {
         selector: "node",
         style: {
-          width: "60",
-          height: "60",
+          width: "60px",
+          height: "60px",
           "background-color": "data(color)",
           label: "data(label)",
           "text-valign": "center",
@@ -30,10 +30,17 @@ export const useCytoscapeStore = defineStore("cytoscape", {
           shape: "round-rectangle",
           "background-color": "#bbb",
           "text-outline-color": "#aaa",
-          "corner-radius": "50",
-          padding: 10,
-          width: "16px",
-          height: "16px",
+          "corner-radius": "300",
+          padding: 50,
+          "font-size": "14px",
+          "z-index": "1"
+        }
+      },
+      {
+        selector: ":child",
+        style: {
+          width: "50px",
+          height: "50px",
           "font-size": "14px",
           "z-index": "1"
         }
@@ -121,8 +128,8 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         avoidOverlap: true,
         avoidOverlapPadding: 10,
         nodeDimensionsIncludeLabels: false,
-        spacingFactor: undefined,
         condense: false,
+        spacingFactor: 0.5,
         rows: undefined,
         cols: undefined,
         position: function (node: any) {},
@@ -151,8 +158,9 @@ export const useCytoscapeStore = defineStore("cytoscape", {
           y2: 1000
         },
         avoidOverlap: true,
+        avoidOverlapPadding: 10,
         nodeDimensionsIncludeLabels: false,
-        spacingFactor: undefined,
+        spacingFactor: 1,
         radius: undefined,
         startAngle: (3 / 2) * Math.PI,
         sweep: undefined,
@@ -169,51 +177,6 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         transform: function (node: any, position: any) {
           return position;
         }
-      },
-      cola: {
-        name: "cola",
-
-        animate: false, // 레이아웃이 실행되는 동안 애니메이션을 보여줄지 여부
-        refresh: 1, // 프레임당 틱 수; 높을수록 빠르지만 더 불안정해짐
-        maxSimulationTime: 100, // 레이아웃을 실행할 최대 시간(ms)
-        ungrabifyWhileSimulating: true, // 레이아웃 중 노드를 드래그할 수 없게 함
-        fit: false, // 레이아웃 위치 조정 시 뷰포트를 맞춤
-        padding: 30, // 시뮬레이션 주위의 여백
-        boundingBox: {
-          x1: 0,
-          y1: 0,
-          x2: 1400,
-          y2: 1000
-        }, // 레이아웃 경계를 제한함; { x1, y1, x2, y2 } 또는 { x1, y1, w, h } 형식
-        nodeDimensionsIncludeLabels: false, // 노드가 사용하는 공간을 결정할 때 레이블을 포함할지 여부
-
-        // 레이아웃 이벤트 콜백
-        ready: function () {}, // 레이아웃 준비 완료 시 호출되는 함수
-        stop: function () {}, // 레이아웃 중지 시 호출되는 함수
-
-        // 위치 지정 옵션
-        randomize: false, // 레이아웃 시작 시 랜덤 노드 위치 사용 여부
-        avoidOverlap: true, // true이면 노드 경계 상자가 겹치는 것을 방지함
-        handleDisconnected: true, // true이면 분리된 구성 요소가 겹치는 것을 방지함
-        convergenceThreshold: 0.01, // 알파 값(시스템 에너지)이 이 값 아래로 떨어지면 레이아웃이 중지됨
-        nodeSpacing: function (node) {
-          return 10;
-        }, // 노드 주위의 추가 간격
-        flow: undefined, // DAG/트리 흐름 레이아웃을 사용하려면 지정, 예: { axis: 'y', minSeparation: 30 }
-        alignment: undefined, // 노드에 대한 상대적 정렬 제약, 예: {vertical: [[{node: node1, offset: 0}, {node: node2, offset: 5}]], horizontal: [[{node: node3}, {node: node4}], [{node: node5}, {node: node6}]]}
-        gapInequalities: undefined, // 노드 간의 간격에 대한 불평등 제약 조건 목록, 예: [{"axis":"y", "left":node1, "right":node2, "gap":25}]
-        centerGraph: true, // 그래프의 위치를 중앙에 맞추기 위해 노드 위치를 초기 조정함 (현재 위치에서 레이아웃을 시작하려면 false를 전달)
-
-        // 엣지 길이를 지정하는 다양한 방법
-        // 각 속성은 상수 값이나 `function( edge ){ return 2; }`와 같은 함수가 될 수 있음
-        edgeLength: undefined, // 시뮬레이션에서 엣지 길이를 직접 설정
-        edgeSymDiffLength: undefined, // 시뮬레이션에서 대칭 차 엣지 길이 설정
-        edgeJaccardLength: undefined, // 시뮬레이션에서 자카드 엣지 길이 설정
-
-        // 콜라 알고리즘의 반복; 정의되지 않은 경우 기본값 사용
-        unconstrIter: undefined, // 초기 무제한 레이아웃 반복
-        userConstIter: undefined, // 사용자 지정 제약 조건이 있는 초기 레이아웃 반복
-        allConstIter: undefined // 비중복 포함 모든 제약 조건이 있는 초기 레이아웃 반복
       },
       concentric: {
         name: "concentric",
@@ -271,6 +234,7 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         animateFilter: function (node: any, i: any) {
           return true;
         },
+        spacingFactor: 0.5,
         ready: undefined,
         stop: undefined,
         transform: function (node: any, position: any) {
@@ -313,7 +277,6 @@ export const useCytoscapeStore = defineStore("cytoscape", {
 
         ready: function () {},
         stop: function () {},
-
         animate: true,
         animationEasing: "ease-in",
         animationDuration: 500,
@@ -351,6 +314,51 @@ export const useCytoscapeStore = defineStore("cytoscape", {
 
         minTemp: 1.0
       },
+      cola: {
+        name: "cola",
+
+        animate: false,
+        refresh: 1, // 프레임당 틱 수; 높을수록 빠르지만 더 불안정해짐
+        maxSimulationTime: 100, // 레이아웃을 실행할 최대 시간(ms)
+        ungrabifyWhileSimulating: true, // 레이아웃 중 노드를 드래그할 수 없게 함
+        fit: true, // 레이아웃 위치 조정 시 뷰포트를 맞춤
+        padding: 30, // 시뮬레이션 주위의 여백
+        boundingBox: {
+          x1: 0,
+          y1: 0,
+          x2: 500,
+          y2: 500
+        }, // 레이아웃 경계를 제한함; { x1, y1, x2, y2 } 또는 { x1, y1, w, h } 형식
+        nodeDimensionsIncludeLabels: false, // 노드가 사용하는 공간을 결정할 때 레이블을 포함할지 여부
+
+        // 레이아웃 이벤트 콜백
+        ready: function () {}, // 레이아웃 준비 완료 시 호출되는 함수
+        stop: function () {}, // 레이아웃 중지 시 호출되는 함수
+
+        // 위치 지정 옵션
+        randomize: false, // 레이아웃 시작 시 랜덤 노드 위치 사용 여부
+        avoidOverlap: true, // true이면 노드 경계 상자가 겹치는 것을 방지함
+        handleDisconnected: true, // true이면 분리된 구성 요소가 겹치는 것을 방지함
+        convergenceThreshold: 0.01, // 알파 값(시스템 에너지)이 이 값 아래로 떨어지면 레이아웃이 중지됨
+        nodeSpacing: function (node) {
+          return 10;
+        }, // 노드 주위의 추가 간격
+        flow: undefined, // DAG/트리 흐름 레이아웃을 사용하려면 지정, 예: { axis: 'y', minSeparation: 30 }
+        alignment: undefined, // 노드에 대한 상대적 정렬 제약, 예: {vertical: [[{node: node1, offset: 0}, {node: node2, offset: 5}]], horizontal: [[{node: node3}, {node: node4}], [{node: node5}, {node: node6}]]}
+        gapInequalities: undefined, // 노드 간의 간격에 대한 불평등 제약 조건 목록, 예: [{"axis":"y", "left":node1, "right":node2, "gap":25}]
+        centerGraph: true, // 그래프의 위치를 중앙에 맞추기 위해 노드 위치를 초기 조정함 (현재 위치에서 레이아웃을 시작하려면 false를 전달)
+
+        // 엣지 길이를 지정하는 다양한 방법
+        // 각 속성은 상수 값이나 `function( edge ){ return 2; }`와 같은 함수가 될 수 있음
+        edgeLength: undefined, // 시뮬레이션에서 엣지 길이를 직접 설정
+        edgeSymDiffLength: undefined, // 시뮬레이션에서 대칭 차 엣지 길이 설정
+        edgeJaccardLength: undefined, // 시뮬레이션에서 자카드 엣지 길이 설정
+
+        // 콜라 알고리즘의 반복; 정의되지 않은 경우 기본값 사용
+        unconstrIter: undefined, // 초기 무제한 레이아웃 반복
+        userConstIter: undefined, // 사용자 지정 제약 조건이 있는 초기 레이아웃 반복
+        allConstIter: undefined // 비중복 포함 모든 제약 조건이 있는 초기 레이아웃 반복
+      },
       fcose: {
         name: "fcose",
         // 'draft', 'default' or 'proof'
@@ -363,10 +371,6 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         randomize: true,
         // Whether or not to animate the layout
         animate: false,
-        // Duration of animation in ms, if enabled
-        animationDuration: 1000,
-        // Easing of animation, if enabled
-        animationEasing: undefined,
         // Fit the viewport to the repositioned nodes
         fit: false,
         // Padding around layout

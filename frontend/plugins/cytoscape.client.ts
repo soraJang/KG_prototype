@@ -6,6 +6,7 @@ import compoundDragAndDrop from "cytoscape-compound-drag-and-drop";
 import htmlLabel from "cytoscape-node-html-label";
 import fcose from "cytoscape-fcose";
 import dblClick from "cytoscape-dblclick";
+import autoMove from "cytoscape-automove";
 
 export default defineNuxtPlugin((nuxtApp) => {
   cytoscape.use(compoundDragAndDrop);
@@ -13,6 +14,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   cytoscape.use(fcose);
   cytoscape.use(htmlLabel);
   cytoscape.use(dblClick);
+  cytoscape.use(autoMove);
 
   nuxtApp.provide("cytoscape", cytoscape);
 });

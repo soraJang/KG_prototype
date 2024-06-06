@@ -19,7 +19,6 @@
           "
         >
           {{ item.label }}
-          {{ item.childCount != 0 ? `(${item.childCount})` : "" }}
         </button>
       </li>
     </ul>

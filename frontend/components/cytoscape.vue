@@ -33,7 +33,6 @@ interface Filter {
   label: string;
   color: string;
   isUnChecked: boolean;
-  childCount: number;
 }
 
 const props = defineProps({
@@ -81,13 +80,11 @@ let refinedLayoutData = ref({});
 onMounted(() => {
   const cytoscape = nuxtApp.$cytoscape;
   const container = mmContainer.value;
-  layoutObj.value = cytoscapeStore.graphLayouts[props.defaultLayout];
 
   cy = cytoscape({
     container: container,
     elements: props.nodeData,
     style: props.styleJson,
-    layout: layoutObj.value,
     zoom: 1,
     pan: {
       x: 0,
@@ -95,7 +92,7 @@ onMounted(() => {
     }
   });
 
-  // layout
+  // layout 초기화
   const initLayout = cytoscapeStore.graphLayouts[props.defaultLayout];
   // isChild 인 node를 제외하고 layout이 적용되도록 새로 담기
   const nodesToLayout = cy.nodes().filter((node: any) => !node.isChild());
@@ -118,27 +115,29 @@ onMounted(() => {
   // 사용은 아래처럼 하고, defaultOption 등을 다른 파일로 관리해도 됨.
   // let rule = cy.automove({});
 
+  // 아래 forEach 에서 'el.data().label = ...' 으로 추가
   // 부모 노드 tag 추가
-  cy.nodeHtmlLabel([
-    {
-      query: ":parent",
-      valign: "top",
-      halign: "center",
-      valignBox: "top",
-      halignBox: "center",
-      tpl: (data) => {
-        const el = cy.getElementById(data.id);
-
-        return `<p class="htmlTag ${
-          hideNodeList.value.includes(data.id) ? "hide" : ""
-        }" id="htmlTag_${data.id}">${
-          el.isParent()
-            ? `${el.data().label} (${el.children().length})`
-            : el.data().label
-        }</p>`;
-      }
-    }
-  ]);
+  // cy.nodeHtmlLabel([
+  //   {
+  //     query: ":parent",
+  //     valign: "center",
+  //     halign: "center",
+  //     valignBox: "center",
+  //     halignBox: "center",
+  //     zIndex: 100,
+  //     tpl: (data) => {
+  //       const el = cy.getElementById(data.id);
+  //
+  //       return `<p class="htmlTag ${
+  //         hideNodeList.value.includes(data.id) ? "hide" : ""
+  //       }" id="htmlTag_${data.id}">${
+  //         el.isParent()
+  //           ? `${el.data().label} (${el.children().length})`
+  //           : el.data().label
+  //       }</p>`;
+  //     }
+  //   }
+  // ]);
 
   cy.elements().forEach((el: any) => {
     let colorCode: string = getRandomColor();
@@ -176,6 +175,7 @@ onMounted(() => {
         // 자식 노드 색상을 여기서 설정해둔다. (부모 노드와 색상 동일하게)
         // TODO : 혹은 색상 채도를 좀 낮춰서 표시 (코드가 복잡해서 보류)
         el.data("childColor", colorCode);
+        el.data().label = `${el.data().label}(${el.children().length})`;
       }
     } else {
       // edge 일때
@@ -190,20 +190,20 @@ onMounted(() => {
       element.style("background-color", element.parent().data("childColor"));
     }
 
-    if (element.isParent()) {
-      const children = element.children();
-
-      children
-        .layout({
-          name: "circle",
-          fit: false,
-          spacingFactor: 0.3
-        })
-        .run();
-
-      // TODO: x, y 축 위치 temp 이므로, 추후 수정 필요
-      element.position({ x: 160, y: 40 });
-    }
+    // 아래 [Issue]로 보류...
+    // 부모 노드 일 때, 자식노드의 layout을 별개로 설정한다.
+    // else if (element.isParent()) {
+    //   const children = element.children();
+    //   children
+    //     .layout({
+    //       name: "grid",
+    //       fit: true,
+    //       spacingFactor: 0.2,
+    //       rows: 3,
+    //       cols: 3
+    //     })
+    //     .run();
+    // }
   });
 
   cy.on("tap", (event: any) => {
@@ -216,6 +216,13 @@ onMounted(() => {
         if (element.isNode() || element.isEdge()) {
           element.removeClass(CONSTANTS.HIGHLIGHT);
           element.removeClass(CONSTANTS.NOT_SELECTED);
+        }
+
+        // isParent인 경우 라벨 위치 센터로 + child 숨기기
+        if (element.isParent()) {
+          const children = element.children();
+          children.style("display", "none");
+          element.style("text-valign", "center");
         }
       });
     }
@@ -347,7 +354,7 @@ onMounted(() => {
       // 상위 노드는 더이상 사용하지 않기때문에 숨김처리 (삭제시에 상위노드가 '노드'로 남는 현상 등 오류가 있어 숨김처리 함)
       el.hide();
 
-      layoutRun();
+      layoutRun(initLayout);
     }
   });
 });
@@ -392,15 +399,14 @@ const setNodeView = (id: string, isUnChecked: boolean) => {
 };
 
 const setGraphLayout = (layout: object) => {
-  layoutObj.value = layout;
-  layoutRun();
+  const layoutOptions = {
+    ...layout,
+    eles: refinedLayoutData
+  };
+  layoutRun(layoutOptions);
 };
-const layoutRun = () => {
+const layoutRun = (layoutOptions) => {
   if (cy) {
-    const layoutOptions = {
-      ...layoutObj.value,
-      eles: refinedLayoutData
-    };
     cy.layout(layoutOptions).run();
   } else {
     console.error("fail");

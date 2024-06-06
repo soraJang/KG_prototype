@@ -6,17 +6,16 @@ export const useCytoscapeStore = defineStore("cytoscape", {
       {
         selector: "node",
         style: {
-          width: "60px",
-          height: "60px",
+          width: "70",
+          height: "70",
           "background-color": "data(color)",
           label: "data(label)",
           "text-valign": "center",
           "text-halign": "center",
           color: "#333",
-          "font-size": "10",
+          "font-size": "11",
           "border-color": "#333",
           "border-width": "2",
-          "z-index": 1,
           "text-wrap": "ellipsis",
           "text-max-width": "40px"
         }
@@ -24,33 +23,39 @@ export const useCytoscapeStore = defineStore("cytoscape", {
       {
         selector: ":parent",
         style: {
-          label: "",
-          "text-valign": "top",
-          "text-halign": "center",
+          label: "data(label)",
+          width: "70",
+          height: "70",
           shape: "round-rectangle",
-          "background-color": "#bbb",
-          "text-outline-color": "#aaa",
-          "corner-radius": "300",
-          padding: 50,
-          "font-size": "14px",
-          "z-index": "1"
+          "corner-radius": "50%",
+          "text-valign": "center",
+          "text-halign": "center",
+          color: "#333",
+          "font-size": "12",
+          "border-color": "#333",
+          "border-width": "2",
+          "z-index": 11,
+          "text-wrap": "wrap",
+          "text-max-width": "100px",
+          "font-weight": "bold",
+          "z-index": 999
+          // "z-compound-depth": "top"
         }
       },
       {
         selector: ":child",
         style: {
-          width: "50px",
-          height: "50px",
-          "font-size": "14px",
-          "z-index": "1"
+          width: "45px",
+          height: "45px",
+          "font-size": "10"
         }
       },
       {
         selector: "node.highlight",
         style: {
           "font-size": "12",
-          "z-index": 2,
-          "text-wrap": "wrap"
+          "text-wrap": "wrap",
+          "z-index": 1
         }
       },
       {
@@ -58,7 +63,7 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         style: {
           "background-blacken": -0.5,
           "border-opacity": 0.5,
-          "font-size": "10",
+          "font-size": "11",
           "text-wrap": "ellipsis",
           "text-opacity": 0.5,
           "z-index": 0
@@ -80,18 +85,17 @@ export const useCytoscapeStore = defineStore("cytoscape", {
           "curve-style": "bezier",
           "target-arrow-color": "#333",
           "target-arrow-shape": "triangle",
-          "font-size": "10",
-          color: "#5F5E5E",
-          "z-index": 1
+          "font-size": "11",
+          color: "#5F5E5E"
         }
       },
       {
         selector: "edge.highlight",
         style: {
           width: 2,
-          "z-index": 2,
           "font-size": "12",
-          "arrow-scale": 1.2
+          "arrow-scale": 1.2,
+          "z-index": 1
         }
       },
       {
@@ -134,9 +138,6 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         cols: undefined,
         position: function (node: any) {},
         sort: undefined,
-        animate: true,
-        animationDuration: 500,
-        animationEasing: "ease-in",
         animateFilter: function (node: any, i: any) {
           return true;
         },
@@ -166,9 +167,6 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         sweep: undefined,
         clockwise: true,
         sort: undefined,
-        animate: true,
-        animationDuration: 500,
-        animationEasing: "ease-in",
         animateFilter: function (node: any, i: any) {
           return true;
         },
@@ -205,9 +203,6 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         levelWidth: function (nodes: any) {
           return nodes.maxDegree() / 4;
         },
-        animate: true,
-        animationDuration: 500,
-        animationEasing: "ease-in",
         animateFilter: function (node: any, i: any) {
           return true;
         },
@@ -234,7 +229,7 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         animateFilter: function (node: any, i: any) {
           return true;
         },
-        spacingFactor: 0.5,
+        spacingFactor: 1,
         ready: undefined,
         stop: undefined,
         transform: function (node: any, position: any) {
@@ -260,9 +255,6 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         nodeDimensionsIncludeLabels: false,
         roots: undefined,
         depthSort: undefined,
-        animate: true,
-        animationDuration: 500,
-        animationEasing: "ease-in",
         animateFilter: function (node: any, i: any) {
           return true;
         },
@@ -274,7 +266,8 @@ export const useCytoscapeStore = defineStore("cytoscape", {
       },
       cose: {
         name: "cose",
-
+        fit: false,
+        padding: 30,
         ready: function () {},
         stop: function () {},
         animate: true,
@@ -285,8 +278,6 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         },
         animationThreshold: 250,
         refresh: 20,
-        fit: true,
-        padding: 30,
         boundingBox: {
           x1: 0,
           y1: 0,

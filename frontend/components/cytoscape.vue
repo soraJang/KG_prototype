@@ -27,8 +27,7 @@ import CONSTANTS from "@cons/constants";
 import Filter from "@comp/units/filter.vue";
 import SelectLayout from "@comp/units/selectLayout.vue";
 import useCytoscapeDragOpt from "@composables/cytoscape/dragOpt";
-const { option, getTarget, createNewEdge, getChild, getSibling, getParent } =
-  useCytoscapeDragOpt();
+
 interface Filter {
   id: string;
   label: string;
@@ -69,29 +68,15 @@ const props = defineProps({
 
 const nuxtApp = useNuxtApp();
 const cytoscapeStore = useCytoscapeStore();
+const { option, getTarget, createNewEdge, getChild, getSibling, getParent } =
+  useCytoscapeDragOpt();
 const hideNodeList = ref([]);
 const filterList = ref([]);
-const layoutObj = ref({});
-const parentColorObj = ref({});
 const mmContainer = ref(null);
 const filters = ref<Filter[]>([]);
 let highlightedNodeId = ref([]);
 let cy: any = null;
 let refinedLayoutData = ref({});
-
-const setFilters = () => {
-  filterList.value.forEach((el) => {
-    if (!el.isChild()) {
-      filters.value.push({
-        id: el.id(),
-        label: el.data().label,
-        color: el.data("colorCode"),
-        isUnChecked: false,
-        childCount: el.children().length
-      });
-    }
-  });
-};
 
 onMounted(() => {
   const cytoscape = nuxtApp.$cytoscape;
@@ -122,6 +107,7 @@ onMounted(() => {
     eles: refinedLayoutData
   };
   cy.layout(layoutOptions).run();
+
   // cy.viewport({
   //   zoom: 0.1
   // });
@@ -219,6 +205,7 @@ onMounted(() => {
       element.position({ x: 160, y: 40 });
     }
   });
+
   cy.on("tap", (event: any) => {
     let evtTarget = event.target;
 
@@ -226,10 +213,7 @@ onMounted(() => {
 
     if (evtTarget === cy) {
       cy.elements().forEach((element: any) => {
-        if (element.isNode()) {
-          element.removeClass(CONSTANTS.HIGHLIGHT);
-          element.removeClass(CONSTANTS.NOT_SELECTED);
-        } else if (element.isEdge()) {
+        if (element.isNode() || element.isEdge()) {
           element.removeClass(CONSTANTS.HIGHLIGHT);
           element.removeClass(CONSTANTS.NOT_SELECTED);
         }
@@ -368,6 +352,18 @@ onMounted(() => {
   });
 });
 
+const setFilters = () => {
+  filterList.value.forEach((el) => {
+    if (!el.isChild()) {
+      filters.value.push({
+        id: el.id(),
+        label: el.data().label,
+        color: el.data("colorCode"),
+        isUnChecked: false
+      });
+    }
+  });
+};
 const getColorCode = () => {
   return Math.floor(Math.random() * 127 + 115).toString(16);
 };
@@ -428,9 +424,21 @@ button {
   border: none;
   outline: none;
 }
+
 .part,
 #cy {
   border: 1px solid red;
+}
+
+.htmlTag {
+  font-size: 10px;
+  color: #333;
+  cursor: default;
+
+  &:hover {
+    font-size: 12px;
+    text-wrap: wrap;
+  }
 }
 
 p.htmlTag.hide {

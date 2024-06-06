@@ -171,6 +171,7 @@ onMounted(() => {
         const parentData = el.parent().data();
         el.data(CONSTANTS.PRNT_CTGRY_ID, parentData.id);
         el.data(CONSTANTS.PRNT_CTGRY_NM, parentData.label);
+        el.style("display", "none");
       } else if (el.isParent()) {
         // 자식 노드 색상을 여기서 설정해둔다. (부모 노드와 색상 동일하게)
         // TODO : 혹은 색상 채도를 좀 낮춰서 표시 (코드가 복잡해서 보류)
@@ -236,6 +237,36 @@ onMounted(() => {
 
     cy.elements().removeClass(CONSTANTS.NOT_SELECTED);
     evtTarget.addClass(CONSTANTS.HIGHLIGHT);
+
+    if (evtTarget.isParent()) {
+      // isParent인 경우 라벨 위치 위로 + child 보이기
+      const children = evtTarget.children();
+      evtTarget.style("text-valign", "top");
+      children.style("display", "element");
+
+      // [Issue] 숨겨놨던 자식 노드가 보여질 때 position 위치가 엉뚱한 위치로 튀는 이슈가 있어서 아래와 같이 이슈처리함
+      // -> 이로인해 :child 노드들의 layout 세팅이 불가 (검토 필요)
+      // 원인: JavaScript 객체의 참조로 인해 콘솔 로그에서 확장할 때 최신 상태가 반영됨.
+      // 해결 방법: 객체의 값을 복사하여 로그에 출력하여 참조 문제를 피함.
+      let initialPosition = { ...evtTarget.position() };
+      // 자식 노드의 상대 위치를 유지하며 부모 노드의 위치를 변경
+      let offsetX = initialPosition.x - evtTarget.position().x;
+      let offsetY = initialPosition.y - evtTarget.position().y;
+
+      evtTarget.children().forEach((element: any) => {
+        let childPosition = element.position();
+        element.position({
+          x: childPosition.x + offsetX,
+          y: childPosition.y + offsetY
+        });
+      });
+
+      // 부모 노드의 위치를 최종적으로 설정
+      evtTarget.position({
+        x: initialPosition.x,
+        y: initialPosition.y
+      });
+    }
 
     cy.elements().forEach((element: any) => {
       if (element.isNode() && element !== evtTarget) {

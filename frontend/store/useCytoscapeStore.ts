@@ -6,17 +6,16 @@ export const useCytoscapeStore = defineStore("cytoscape", {
       {
         selector: "node",
         style: {
-          width: "60",
-          height: "60",
+          width: "70",
+          height: "70",
           "background-color": "data(color)",
           label: "data(label)",
           "text-valign": "center",
           "text-halign": "center",
           color: "#333",
-          "font-size": "10",
+          "font-size": "11",
           "border-color": "#333",
           "border-width": "2",
-          "z-index": 1,
           "text-wrap": "ellipsis",
           "text-max-width": "40px"
         }
@@ -24,26 +23,39 @@ export const useCytoscapeStore = defineStore("cytoscape", {
       {
         selector: ":parent",
         style: {
-          label: "",
-          "text-valign": "top",
-          "text-halign": "center",
+          label: "data(label)",
+          width: "70",
+          height: "70",
           shape: "round-rectangle",
-          "background-color": "#bbb",
-          "text-outline-color": "#aaa",
-          "corner-radius": "50",
-          padding: 10,
-          width: "16px",
-          height: "16px",
-          "font-size": "14px",
-          "z-index": "1"
+          "corner-radius": "50%",
+          "text-valign": "center",
+          "text-halign": "center",
+          color: "#333",
+          "font-size": "12",
+          "border-color": "#333",
+          "border-width": "2",
+          "z-index": 11,
+          "text-wrap": "wrap",
+          "text-max-width": "100px",
+          "font-weight": "bold",
+          "z-index": 999
+          // "z-compound-depth": "top"
+        }
+      },
+      {
+        selector: ":child",
+        style: {
+          width: "45px",
+          height: "45px",
+          "font-size": "10"
         }
       },
       {
         selector: "node.highlight",
         style: {
           "font-size": "12",
-          "z-index": 2,
-          "text-wrap": "wrap"
+          "text-wrap": "wrap",
+          "z-index": 1
         }
       },
       {
@@ -51,7 +63,7 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         style: {
           "background-blacken": -0.5,
           "border-opacity": 0.5,
-          "font-size": "10",
+          "font-size": "11",
           "text-wrap": "ellipsis",
           "text-opacity": 0.5,
           "z-index": 0
@@ -73,18 +85,17 @@ export const useCytoscapeStore = defineStore("cytoscape", {
           "curve-style": "bezier",
           "target-arrow-color": "#333",
           "target-arrow-shape": "triangle",
-          "font-size": "10",
-          color: "#5F5E5E",
-          "z-index": 1
+          "font-size": "11",
+          color: "#5F5E5E"
         }
       },
       {
         selector: "edge.highlight",
         style: {
           width: 2,
-          "z-index": 2,
           "font-size": "12",
-          "arrow-scale": 1.2
+          "arrow-scale": 1.2,
+          "z-index": 1
         }
       },
       {
@@ -112,24 +123,21 @@ export const useCytoscapeStore = defineStore("cytoscape", {
 
         fit: false,
         padding: 30,
-        boundingBox: {
-          x1: 0,
-          y1: 0,
-          x2: 1400,
-          y2: 1000
-        },
+        // boundingBox: {
+        //   x1: 0,
+        //   y1: 0,
+        //   x2: 1400,
+        //   y2: 1000
+        // },
         avoidOverlap: true,
         avoidOverlapPadding: 10,
         nodeDimensionsIncludeLabels: false,
-        spacingFactor: undefined,
         condense: false,
+        spacingFactor: 0.5,
         rows: undefined,
         cols: undefined,
         position: function (node: any) {},
         sort: undefined,
-        animate: true,
-        animationDuration: 500,
-        animationEasing: "ease-in",
         animateFilter: function (node: any, i: any) {
           return true;
         },
@@ -144,23 +152,21 @@ export const useCytoscapeStore = defineStore("cytoscape", {
 
         fit: false,
         padding: 30,
-        boundingBox: {
-          x1: 0,
-          y1: 0,
-          x2: 1400,
-          y2: 1000
-        },
+        // boundingBox: {
+        //   x1: 0,
+        //   y1: 0,
+        //   x2: 1400,
+        //   y2: 1000
+        // },
         avoidOverlap: true,
+        avoidOverlapPadding: 10,
         nodeDimensionsIncludeLabels: false,
-        spacingFactor: undefined,
+        spacingFactor: 1,
         radius: undefined,
         startAngle: (3 / 2) * Math.PI,
         sweep: undefined,
         clockwise: true,
         sort: undefined,
-        animate: true,
-        animationDuration: 500,
-        animationEasing: "ease-in",
         animateFilter: function (node: any, i: any) {
           return true;
         },
@@ -170,21 +176,144 @@ export const useCytoscapeStore = defineStore("cytoscape", {
           return position;
         }
       },
-      cola: {
-        name: "cola",
+      concentric: {
+        name: "concentric",
 
-        animate: false, // 레이아웃이 실행되는 동안 애니메이션을 보여줄지 여부
-        refresh: 1, // 프레임당 틱 수; 높을수록 빠르지만 더 불안정해짐
-        maxSimulationTime: 100, // 레이아웃을 실행할 최대 시간(ms)
-        ungrabifyWhileSimulating: true, // 레이아웃 중 노드를 드래그할 수 없게 함
-        fit: false, // 레이아웃 위치 조정 시 뷰포트를 맞춤
-        padding: 30, // 시뮬레이션 주위의 여백
+        fit: true,
+        padding: 30,
+        startAngle: (3 / 2) * Math.PI,
+        sweep: undefined,
+        clockwise: true,
+        equidistant: false,
+        minNodeSpacing: 10,
+        // boundingBox: {
+        //   x1: 0,
+        //   y1: 0,
+        //   x2: 1400,
+        //   y2: 1000
+        // },
+        avoidOverlap: true,
+        nodeDimensionsIncludeLabels: false,
+        height: undefined,
+        width: undefined,
+        spacingFactor: undefined,
+        concentric: function (node: any) {
+          return node.degree();
+        },
+        levelWidth: function (nodes: any) {
+          return nodes.maxDegree() / 4;
+        },
+        animateFilter: function (node: any, i: any) {
+          return true;
+        },
+        ready: undefined,
+        stop: undefined,
+        transform: function (node: any, position: any) {
+          return position;
+        }
+      },
+      random: {
+        name: "random",
+
+        fit: true,
+        padding: 30,
+        // boundingBox: {
+        //   x1: 0,
+        //   y1: 0,
+        //   x2: 1400,
+        //   y2: 1000
+        // },
+        animateFilter: function (node: any, i: any) {
+          return true;
+        },
+        spacingFactor: 1,
+        ready: undefined,
+        stop: undefined,
+        transform: function (node: any, position: any) {
+          return position;
+        }
+      },
+      breadthfirst: {
+        name: "breadthfirst",
+
+        fit: true,
+        directed: false,
+        padding: 30,
+        circle: false,
+        grid: false,
+        spacingFactor: 1.75,
+        // boundingBox: {
+        //   x1: 0,
+        //   y1: 0,
+        //   x2: 1400,
+        //   y2: 1000
+        // },
+        avoidOverlap: true,
+        nodeDimensionsIncludeLabels: false,
+        roots: undefined,
+        depthSort: undefined,
+        animateFilter: function (node: any, i: any) {
+          return true;
+        },
+        ready: undefined,
+        stop: undefined,
+        transform: function (node: any, position: any) {
+          return position;
+        }
+      },
+      cose: {
+        name: "cose",
+        fit: false,
+        padding: 30,
+        ready: function () {},
+        stop: function () {},
+        animateFilter: function (nod: any, i: any) {
+          return true;
+        },
+        animationThreshold: 250,
+        refresh: 20,
         boundingBox: {
           x1: 0,
           y1: 0,
           x2: 1400,
           y2: 1000
-        }, // 레이아웃 경계를 제한함; { x1, y1, x2, y2 } 또는 { x1, y1, w, h } 형식
+        },
+        nodeDimensionsIncludeLabels: false,
+        randomize: false,
+        componentSpacing: 40,
+        nodeRepulsion: function (node: any) {
+          return 2048;
+        },
+        nodeOverlap: 4,
+        idealEdgeLength: function (edge: any) {
+          return 32;
+        },
+        edgeElasticity: function (edge: any) {
+          return 32;
+        },
+        nestingFactor: 1.2,
+        gravity: 1,
+        numIter: 1000,
+        initialTemp: 1000,
+        coolingFactor: 0.99,
+
+        minTemp: 1.0
+      },
+      cola: {
+        name: "cola",
+
+        animate: false,
+        refresh: 1, // 프레임당 틱 수; 높을수록 빠르지만 더 불안정해짐
+        maxSimulationTime: 100, // 레이아웃을 실행할 최대 시간(ms)
+        ungrabifyWhileSimulating: true, // 레이아웃 중 노드를 드래그할 수 없게 함
+        fit: true, // 레이아웃 위치 조정 시 뷰포트를 맞춤
+        padding: 30, // 시뮬레이션 주위의 여백
+        // boundingBox: {
+        //   x1: 0,
+        //   y1: 0,
+        //   x2: 500,
+        //   y2: 500
+        // }, // 레이아웃 경계를 제한함; { x1, y1, x2, y2 } 또는 { x1, y1, w, h } 형식
         nodeDimensionsIncludeLabels: false, // 노드가 사용하는 공간을 결정할 때 레이블을 포함할지 여부
 
         // 레이아웃 이벤트 콜백
@@ -215,142 +344,6 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         userConstIter: undefined, // 사용자 지정 제약 조건이 있는 초기 레이아웃 반복
         allConstIter: undefined // 비중복 포함 모든 제약 조건이 있는 초기 레이아웃 반복
       },
-      concentric: {
-        name: "concentric",
-
-        fit: true,
-        padding: 30,
-        startAngle: (3 / 2) * Math.PI,
-        sweep: undefined,
-        clockwise: true,
-        equidistant: false,
-        minNodeSpacing: 10,
-        boundingBox: {
-          x1: 0,
-          y1: 0,
-          x2: 1400,
-          y2: 1000
-        },
-        avoidOverlap: true,
-        nodeDimensionsIncludeLabels: false,
-        height: undefined,
-        width: undefined,
-        spacingFactor: undefined,
-        concentric: function (node: any) {
-          return node.degree();
-        },
-        levelWidth: function (nodes: any) {
-          return nodes.maxDegree() / 4;
-        },
-        animate: true,
-        animationDuration: 500,
-        animationEasing: "ease-in",
-        animateFilter: function (node: any, i: any) {
-          return true;
-        },
-        ready: undefined,
-        stop: undefined,
-        transform: function (node: any, position: any) {
-          return position;
-        }
-      },
-      random: {
-        name: "random",
-
-        fit: true,
-        padding: 30,
-        boundingBox: {
-          x1: 0,
-          y1: 0,
-          x2: 1400,
-          y2: 1000
-        },
-        animate: true,
-        animationDuration: 500,
-        animationEasing: "ease-in",
-        animateFilter: function (node: any, i: any) {
-          return true;
-        },
-        ready: undefined,
-        stop: undefined,
-        transform: function (node: any, position: any) {
-          return position;
-        }
-      },
-      breadthfirst: {
-        name: "breadthfirst",
-
-        fit: true,
-        directed: false,
-        padding: 30,
-        circle: false,
-        grid: false,
-        spacingFactor: 1.75,
-        boundingBox: {
-          x1: 0,
-          y1: 0,
-          x2: 1400,
-          y2: 1000
-        },
-        avoidOverlap: true,
-        nodeDimensionsIncludeLabels: false,
-        roots: undefined,
-        depthSort: undefined,
-        animate: true,
-        animationDuration: 500,
-        animationEasing: "ease-in",
-        animateFilter: function (node: any, i: any) {
-          return true;
-        },
-        ready: undefined,
-        stop: undefined,
-        transform: function (node: any, position: any) {
-          return position;
-        }
-      },
-      cose: {
-        name: "cose",
-
-        ready: function () {},
-        stop: function () {},
-
-        animate: true,
-        animationEasing: "ease-in",
-        animationDuration: 500,
-        animateFilter: function (nod: any, i: any) {
-          return true;
-        },
-        animationThreshold: 250,
-        refresh: 20,
-        fit: true,
-        padding: 30,
-        boundingBox: {
-          x1: 0,
-          y1: 0,
-          x2: 1400,
-          y2: 1000
-        },
-        nodeDimensionsIncludeLabels: false,
-        randomize: false,
-        componentSpacing: 40,
-        nodeRepulsion: function (node: any) {
-          return 2048;
-        },
-        nodeOverlap: 4,
-        idealEdgeLength: function (edge: any) {
-          return 32;
-        },
-        edgeElasticity: function (edge: any) {
-          return 32;
-        },
-        nestingFactor: 1.2,
-        gravity: 1,
-        numIter: 1000,
-        initialTemp: 1000,
-        coolingFactor: 0.99,
-
-        minTemp: 1.0
-      },
       fcose: {
         name: "fcose",
         // 'draft', 'default' or 'proof'
@@ -363,10 +356,6 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         randomize: true,
         // Whether or not to animate the layout
         animate: false,
-        // Duration of animation in ms, if enabled
-        animationDuration: 1000,
-        // Easing of animation, if enabled
-        animationEasing: undefined,
         // Fit the viewport to the repositioned nodes
         fit: false,
         // Padding around layout

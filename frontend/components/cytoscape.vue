@@ -191,20 +191,19 @@ onMounted(() => {
       element.style("background-color", element.parent().data("childColor"));
     }
 
-    // 아래 [Issue]로 보류...
     // 부모 노드 일 때, 자식노드의 layout을 별개로 설정한다.
-    // else if (element.isParent()) {
-    //   const children = element.children();
-    //   children
-    //     .layout({
-    //       name: "grid",
-    //       fit: true,
-    //       spacingFactor: 0.2,
-    //       rows: 3,
-    //       cols: 3
-    //     })
-    //     .run();
-    // }
+    else if (element.isParent()) {
+      const children = element.children();
+      children
+        .layout({
+          name: "grid",
+          fit: true,
+          spacingFactor: 0.2,
+          rows: 3,
+          cols: 3
+        })
+        .run();
+    }
   });
 
   cy.on("tap", (event: any) => {
@@ -243,29 +242,6 @@ onMounted(() => {
       const children = evtTarget.children();
       evtTarget.style("text-valign", "top");
       children.style("display", "element");
-
-      // [Issue] 숨겨놨던 자식 노드가 보여질 때 position 위치가 엉뚱한 위치로 튀는 이슈가 있어서 아래와 같이 이슈처리함
-      // -> 이로인해 :child 노드들의 layout 세팅이 불가 (검토 필요)
-      // 원인: JavaScript 객체의 참조로 인해 콘솔 로그에서 확장할 때 최신 상태가 반영됨.
-      // 해결 방법: 객체의 값을 복사하여 로그에 출력하여 참조 문제를 피함.
-      let initialPosition = { ...evtTarget.position() };
-      // 자식 노드의 상대 위치를 유지하며 부모 노드의 위치를 변경
-      let offsetX = initialPosition.x - evtTarget.position().x;
-      let offsetY = initialPosition.y - evtTarget.position().y;
-
-      evtTarget.children().forEach((element: any) => {
-        let childPosition = element.position();
-        element.position({
-          x: childPosition.x + offsetX,
-          y: childPosition.y + offsetY
-        });
-      });
-
-      // 부모 노드의 위치를 최종적으로 설정
-      evtTarget.position({
-        x: initialPosition.x,
-        y: initialPosition.y
-      });
     }
 
     cy.elements().forEach((element: any) => {

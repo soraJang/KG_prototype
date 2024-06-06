@@ -426,7 +426,9 @@ const setNodeView = (id: string, isUnChecked: boolean) => {
   const children = getChild(cy, el);
   children.forEach((c) => {
     isUnChecked ? c.hide() : c.show();
+    c.style("display", "none");
   });
+  el.style("text-valign", "center");
 };
 
 const setGraphLayout = (layout: object) => {

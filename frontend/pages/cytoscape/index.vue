@@ -2,7 +2,7 @@
   <cytoscape
     :node-data="dummy200Json.elements"
     :style-json="cytoscapeStore.graphStyle"
-    :default-layout="'concentric'"
+    :default-layout="'random'"
   ></cytoscape>
 </template>
 

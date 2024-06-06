@@ -123,12 +123,12 @@ export const useCytoscapeStore = defineStore("cytoscape", {
 
         fit: false,
         padding: 30,
-        boundingBox: {
-          x1: 0,
-          y1: 0,
-          x2: 1400,
-          y2: 1000
-        },
+        // boundingBox: {
+        //   x1: 0,
+        //   y1: 0,
+        //   x2: 1400,
+        //   y2: 1000
+        // },
         avoidOverlap: true,
         avoidOverlapPadding: 10,
         nodeDimensionsIncludeLabels: false,
@@ -152,12 +152,12 @@ export const useCytoscapeStore = defineStore("cytoscape", {
 
         fit: false,
         padding: 30,
-        boundingBox: {
-          x1: 0,
-          y1: 0,
-          x2: 1400,
-          y2: 1000
-        },
+        // boundingBox: {
+        //   x1: 0,
+        //   y1: 0,
+        //   x2: 1400,
+        //   y2: 1000
+        // },
         avoidOverlap: true,
         avoidOverlapPadding: 10,
         nodeDimensionsIncludeLabels: false,
@@ -186,12 +186,12 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         clockwise: true,
         equidistant: false,
         minNodeSpacing: 10,
-        boundingBox: {
-          x1: 0,
-          y1: 0,
-          x2: 1400,
-          y2: 1000
-        },
+        // boundingBox: {
+        //   x1: 0,
+        //   y1: 0,
+        //   x2: 1400,
+        //   y2: 1000
+        // },
         avoidOverlap: true,
         nodeDimensionsIncludeLabels: false,
         height: undefined,
@@ -217,15 +217,12 @@ export const useCytoscapeStore = defineStore("cytoscape", {
 
         fit: true,
         padding: 30,
-        boundingBox: {
-          x1: 0,
-          y1: 0,
-          x2: 1400,
-          y2: 1000
-        },
-        animate: true,
-        animationDuration: 500,
-        animationEasing: "ease-in",
+        // boundingBox: {
+        //   x1: 0,
+        //   y1: 0,
+        //   x2: 1400,
+        //   y2: 1000
+        // },
         animateFilter: function (node: any, i: any) {
           return true;
         },
@@ -245,12 +242,12 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         circle: false,
         grid: false,
         spacingFactor: 1.75,
-        boundingBox: {
-          x1: 0,
-          y1: 0,
-          x2: 1400,
-          y2: 1000
-        },
+        // boundingBox: {
+        //   x1: 0,
+        //   y1: 0,
+        //   x2: 1400,
+        //   y2: 1000
+        // },
         avoidOverlap: true,
         nodeDimensionsIncludeLabels: false,
         roots: undefined,
@@ -270,9 +267,6 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         padding: 30,
         ready: function () {},
         stop: function () {},
-        animate: true,
-        animationEasing: "ease-in",
-        animationDuration: 500,
         animateFilter: function (nod: any, i: any) {
           return true;
         },
@@ -314,12 +308,12 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         ungrabifyWhileSimulating: true, // 레이아웃 중 노드를 드래그할 수 없게 함
         fit: true, // 레이아웃 위치 조정 시 뷰포트를 맞춤
         padding: 30, // 시뮬레이션 주위의 여백
-        boundingBox: {
-          x1: 0,
-          y1: 0,
-          x2: 500,
-          y2: 500
-        }, // 레이아웃 경계를 제한함; { x1, y1, x2, y2 } 또는 { x1, y1, w, h } 형식
+        // boundingBox: {
+        //   x1: 0,
+        //   y1: 0,
+        //   x2: 500,
+        //   y2: 500
+        // }, // 레이아웃 경계를 제한함; { x1, y1, x2, y2 } 또는 { x1, y1, w, h } 형식
         nodeDimensionsIncludeLabels: false, // 노드가 사용하는 공간을 결정할 때 레이블을 포함할지 여부
 
         // 레이아웃 이벤트 콜백

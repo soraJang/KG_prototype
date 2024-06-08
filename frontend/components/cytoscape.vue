@@ -115,30 +115,6 @@ onMounted(() => {
   // 사용은 아래처럼 하고, defaultOption 등을 다른 파일로 관리해도 됨.
   // let rule = cy.automove({});
 
-  // 아래 forEach 에서 'el.data().label = ...' 으로 추가
-  // 부모 노드 tag 추가
-  // cy.nodeHtmlLabel([
-  //   {
-  //     query: ":parent",
-  //     valign: "center",
-  //     halign: "center",
-  //     valignBox: "center",
-  //     halignBox: "center",
-  //     zIndex: 100,
-  //     tpl: (data) => {
-  //       const el = cy.getElementById(data.id);
-  //
-  //       return `<p class="htmlTag ${
-  //         hideNodeList.value.includes(data.id) ? "hide" : ""
-  //       }" id="htmlTag_${data.id}">${
-  //         el.isParent()
-  //           ? `${el.data().label} (${el.children().length})`
-  //           : el.data().label
-  //       }</p>`;
-  //     }
-  //   }
-  // ]);
-
   cy.elements().forEach((el: any) => {
     let colorCode: string = getRandomColor();
 
@@ -319,21 +295,17 @@ onMounted(() => {
    * -> 노드 위치가 바뀐다고 해서, canvas 의 중심 위치가 바뀌지 않음.
    * 그러니까 정확하게 하려면? 노드 위치가 바뀔때마다 중심 위치를 계산해서.. 어쩌고..
    */
-  cy.on("dragpan", (e, a, b, c) => {
-    const el = e.target;
 
-    // TODO: 여기서 graph 자체에 rule 을 걸고 싶은데 그게 안되는것 같음.
-    // cy.automove({
-    //   nodesMatching: el,
-    //   reposition: "viewport"
-    // });
-
-    // el.nodes().forEach((n) => {
-    //   // const { x1, x2, y1, y2 } = n.renderedBoundingBox();
-    // });
-
-    // // console.log(`${x} | ${y}`);
-    // // cy.viewport({ pan: { x: x < 0 ? 0 : x, y: y < 0 ? 0 : y } });
+  let x = 0;
+  let y = 0;
+  cy.on("dragpan", () => {
+    if (isGraphOutOfView()) {
+      cy.viewport({ pan: { x: x, y: y } });
+    } else {
+      const pan = cy.pan();
+      x = pan.x;
+      y = pan.y;
+    }
   });
 
   // dbl click 간격?
@@ -378,6 +350,15 @@ const setFilters = () => {
     }
   });
 };
+
+const isGraphOutOfView = () => {
+  const rbb = cy.elements().renderedBoundingbox();
+
+  return (
+    rbb.x1 < 0 || rbb.y1 < 0 || rbb.x2 > cy.width() || rbb.y2 > cy.height()
+  );
+};
+
 const getColorCode = () => {
   return Math.floor(Math.random() * 127 + 115).toString(16);
 };

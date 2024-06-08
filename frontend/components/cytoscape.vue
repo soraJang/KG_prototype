@@ -115,30 +115,6 @@ onMounted(() => {
   // 사용은 아래처럼 하고, defaultOption 등을 다른 파일로 관리해도 됨.
   // let rule = cy.automove({});
 
-  // 아래 forEach 에서 'el.data().label = ...' 으로 추가
-  // 부모 노드 tag 추가
-  // cy.nodeHtmlLabel([
-  //   {
-  //     query: ":parent",
-  //     valign: "center",
-  //     halign: "center",
-  //     valignBox: "center",
-  //     halignBox: "center",
-  //     zIndex: 100,
-  //     tpl: (data) => {
-  //       const el = cy.getElementById(data.id);
-  //
-  //       return `<p class="htmlTag ${
-  //         hideNodeList.value.includes(data.id) ? "hide" : ""
-  //       }" id="htmlTag_${data.id}">${
-  //         el.isParent()
-  //           ? `${el.data().label} (${el.children().length})`
-  //           : el.data().label
-  //       }</p>`;
-  //     }
-  //   }
-  // ]);
-
   cy.elements().forEach((el: any) => {
     let colorCode: string = getRandomColor();
 

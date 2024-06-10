@@ -77,6 +77,8 @@ let highlightedNodeId = ref([]);
 let cy: any = null;
 let refinedLayoutData = ref({});
 
+const childrenBackup = ref({});
+
 onMounted(() => {
   const cytoscape = nuxtApp.$cytoscape;
   const container = mmContainer.value;
@@ -92,6 +94,22 @@ onMounted(() => {
     }
   });
 
+  // TODO : parent-child 관계가 없으면 layout이 정상적으로 그려짐.
+  // parent 밑에 child 가 한개라도 있으면 layout 이 정상적으로 안그려짐.
+  // cy.elements().children((c) => {
+  //   if (!c.removed()) {
+  //     const pId = c.parent().data().id;
+  //     const sib = c.parent().children();
+  //
+  //     childrenBackup.value[pId] = sib;
+  //     sib.forEach((r, rI) => {
+  //         console.log("r: " + r.data().id);
+  //         r.remove();
+  //       }
+  //     });
+  //   }
+  // });
+
   // layout 초기화
   const initLayout = cytoscapeStore.graphLayouts[props.defaultLayout];
   // isChild 인 node를 제외하고 layout이 적용되도록 새로 담기
@@ -105,9 +123,6 @@ onMounted(() => {
   };
   cy.layout(layoutOptions).run();
 
-  // cy.viewport({
-  //   zoom: 0.1
-  // });
   const cdnd = cy.compoundDragAndDrop(option.value);
 
   // 여기서 node 에 대한 automove 를 설정하고 싶으나,
@@ -161,24 +176,27 @@ onMounted(() => {
 
   setFilters();
 
+  // 부모 노드의 경우 위치를 가질수 없음. 자식노드를 기준으로 부모노드의 위치가 결정됨
+  // 자식노드를 position 을 통일해서 해당 위치가 부모 노드인것처럼 처리해야함.
+  // let doneParentList = [];
+  // cy.elements()
+  //   .children()
+  //   .forEach((c) => {
+  //     let parentId = c.data(CONSTANTS.PRNT_CTGRY_ID);
+  //
+  //     if (!doneParentList.includes(parentId)) {
+  //       const siblings = getSibling(cy, c);
+  //       siblings.forEach((s) => {
+  //         s.position(c.position());
+  //       });
+  //       doneParentList.push(parentId);
+  //     }
+  //   });
+
   cy.elements().forEach((element: any) => {
     // 자식노드일때, 부모노드에 설정해두었던 색상코드를 일괄적용한다.
     if (element.isChild()) {
       element.style("background-color", element.parent().data("childColor"));
-    }
-
-    // 부모 노드 일 때, 자식노드의 layout을 별개로 설정한다.
-    else if (element.isParent()) {
-      const children = element.children();
-      children
-        .layout({
-          name: "grid",
-          fit: true,
-          spacingFactor: 0.2,
-          rows: 3,
-          cols: 3
-        })
-        .run();
     }
   });
 

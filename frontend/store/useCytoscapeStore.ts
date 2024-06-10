@@ -6,38 +6,38 @@ export const useCytoscapeStore = defineStore("cytoscape", {
       {
         selector: "node",
         style: {
-          width: "70",
-          height: "70",
+          width: "100",
+          height: "100",
           "background-color": "data(color)",
           label: "data(label)",
           "text-valign": "center",
           "text-halign": "center",
           color: "#333",
-          "font-size": "11",
+          "font-size": "13",
           "border-color": "#333",
           "border-width": "2",
           "text-wrap": "ellipsis",
-          "text-max-width": "40px"
+          "text-max-width": "80px"
         }
       },
       {
         selector: ":parent",
         style: {
           label: "data(label)",
-          width: "70",
-          height: "70",
+          width: "100",
+          height: "100",
           shape: "round-rectangle",
           "corner-radius": "50%",
           "text-valign": "center",
           "text-halign": "center",
           color: "#333",
-          "font-size": "12",
+          padding: 0,
+          "font-size": "13",
           "border-color": "#333",
           "border-width": "2",
           "z-index": 11,
           "text-wrap": "wrap",
           "text-max-width": "100px",
-          "font-weight": "bold",
           "z-compound-depth": "top",
           "z-index-compare": "manual"
         }
@@ -48,14 +48,15 @@ export const useCytoscapeStore = defineStore("cytoscape", {
           width: "45px",
           height: "45px",
           "font-size": "10",
-          "z-compound-depth": "top"
+          "z-compound-depth": "top",
+          "text-max-width": "40px"
         }
       },
       {
         selector: "node.highlight",
         style: {
-          "font-size": "12",
-          "text-wrap": "wrap",
+          "font-size": "15",
+          "font-weight": "bold",
           "z-index": 1
         }
       },
@@ -64,7 +65,7 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         style: {
           "background-blacken": -0.5,
           "border-opacity": 0.5,
-          "font-size": "11",
+          "font-size": "13",
           "text-wrap": "ellipsis",
           "text-opacity": 0.5,
           "z-index": 0
@@ -73,8 +74,8 @@ export const useCytoscapeStore = defineStore("cytoscape", {
       {
         selector: "node.mouseHover",
         style: {
-          "font-size": "12",
-          "text-wrap": "wrap"
+          "font-size": "15",
+          "font-weight": "bold"
         }
       },
       {
@@ -86,7 +87,7 @@ export const useCytoscapeStore = defineStore("cytoscape", {
           "curve-style": "bezier",
           "target-arrow-color": "#333",
           "target-arrow-shape": "triangle",
-          "font-size": "11",
+          "font-size": "13",
           color: "#5F5E5E"
         }
       },
@@ -94,7 +95,8 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         selector: "edge.highlight",
         style: {
           width: 2,
-          "font-size": "12",
+          "font-size": "15",
+          "font-weight": "bold",
           "arrow-scale": 1.2,
           "z-index": 1
         }
@@ -110,7 +112,7 @@ export const useCytoscapeStore = defineStore("cytoscape", {
       {
         selector: "edge.mouseHover",
         style: {
-          "font-size": "12",
+          "font-size": "15",
           width: 2,
           "arrow-scale": 1.2
         }

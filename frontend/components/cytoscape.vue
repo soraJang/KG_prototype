@@ -11,17 +11,27 @@
       :highlighted-node-id="highlightedNodeId"
       @set-node-view="setNodeView"
     ></Filter>
-
-    <div
-      id="cy"
-      ref="mmContainer"
-      style="width: calc(100% - 400px); height: 800px; border: 1px solid #ddd"
-    ></div>
+    <div style="position: relative; width: calc(100% - 350px); height: 1000px">
+      <div
+        id="cy"
+        ref="mmContainer"
+        style="width: 100%; height: 100%; border: 1px solid #ddd"
+      ></div>
+      <div
+        class="tooltip"
+        v-if="tooltipVisible"
+        :style="tooltipStyles"
+        ref="tooltip"
+      >
+        {{ tooltipContent }}
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, defineProps } from "vue";
+import { ref, onMounted, defineProps, watch } from "vue";
+import { useFloating } from "@floating-ui/vue";
 import { useCytoscapeStore } from "@store/useCytoscapeStore";
 import CONSTANTS from "@cons/constants";
 import Filter from "@comp/units/filter.vue";
@@ -76,6 +86,13 @@ const filters = ref<Filter[]>([]);
 let highlightedNodeId = ref([]);
 let cy: any = null;
 let refinedLayoutData = ref({});
+const reference = ref(null);
+const floating = ref(null);
+const tooltipVisible = ref(false);
+const tooltipContent = ref("");
+const tooltipStyles = ref({});
+
+useFloating(reference, floating, {});
 
 onMounted(() => {
   const cytoscape = nuxtApp.$cytoscape;
@@ -272,11 +289,23 @@ onMounted(() => {
   cy.on("mouseover", "node", (event: any) => {
     let evtTarget = event.target;
     evtTarget.addClass(CONSTANTS.MOUSE_HOVER);
+
+    const pos = evtTarget.renderedPosition();
+    tooltipContent.value = evtTarget.data("label");
+    tooltipVisible.value = true;
+
+    tooltipStyles.value = {
+      position: "absolute",
+      top: `${pos.y - 15}px`,
+      left: `${pos.x + 50}px`
+    };
   });
 
   cy.on("mouseout", "node", (event: any) => {
     let evtTarget = event.target;
     evtTarget.removeClass(CONSTANTS.MOUSE_HOVER);
+
+    tooltipVisible.value = false;
   });
 
   cy.on("mouseover", "edge", (event: any) => {
@@ -439,5 +468,17 @@ button {
 
 p.htmlTag.hide {
   display: none;
+}
+
+.tooltip {
+  background: #fff;
+  border: 1px solid #ccc;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  color: #444;
+  padding: 5px;
+  pointer-events: none;
+  z-index: 10;
 }
 </style>

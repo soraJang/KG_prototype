@@ -293,13 +293,14 @@ onMounted(() => {
     evtTarget.addClass(CONSTANTS.MOUSE_HOVER);
 
     const pos = evtTarget.renderedPosition();
+    const targetBoundingWidth = evtTarget.boundingBox().w;
+
     tooltipContent.value = evtTarget.data("label");
     tooltipVisible.value = true;
-
     tooltipStyles.value = {
       position: "absolute",
       top: `${pos.y - 15}px`,
-      left: `${pos.x + 50}px`
+      left: `${pos.x + targetBoundingWidth / 2 + 2}px`
     };
   });
 

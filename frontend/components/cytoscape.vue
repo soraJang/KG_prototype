@@ -410,7 +410,7 @@ const tapReset = () => {
       const children = element.children();
       children.style("display", "none");
       element.style("text-valign", "center");
-        element.style("padding", 0);
+      element.style("padding", 0);
     }
   });
 };

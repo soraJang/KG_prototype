@@ -99,6 +99,8 @@ const tooltipVisible = ref(false);
 const tooltipContent = ref("");
 const tooltipStyles = ref({});
 
+const useDragpanOpt = ref(true);
+
 useFloating(reference, floating, {});
 
 const childrenBackup = ref({});
@@ -189,30 +191,6 @@ onMounted(() => {
 
   setFilters();
 
-  // 부모 노드의 경우 위치를 가질수 없음. 자식노드를 기준으로 부모노드의 위치가 결정됨
-  // 자식노드를 position 을 통일해서 해당 위치가 부모 노드인것처럼 처리해야함.
-  let doneParentList = [];
-  cy.elements()
-    .children()
-    .forEach((c) => {
-      let parentId = c.data(CONSTANTS.PRNT_CTGRY_ID);
-
-      if (!doneParentList.includes(parentId)) {
-        const siblings = getSibling(cy, c);
-        siblings.forEach((s) => {
-          s.position(c.position());
-        });
-        doneParentList.push(parentId);
-      }
-    });
-
-  cy.elements().forEach((element: any) => {
-    // 자식노드일때, 부모노드에 설정해두었던 색상코드를 일괄적용한다.
-    if (element.isChild()) {
-      element.style("background-color", element.parent().data("childColor"));
-    }
-  });
-
   cy.on("tap", (event: any) => {
     let evtTarget = event.target;
 
@@ -240,6 +218,9 @@ onMounted(() => {
         const siblings = childrenBackup.value[evtTarget.data().id];
         cy.add(siblings);
         evtTarget.children().position(oldPosition);
+        evtTarget
+          .children()
+          .style("background-color", evtTarget.data("childColor"));
         evtTarget.data({
           [CONSTANTS.IS_PARENT]: false,
           [CONSTANTS.CHILD_CNT]: 0
@@ -346,12 +327,26 @@ onMounted(() => {
   let x = 0;
   let y = 0;
   cy.on("dragpan", () => {
-    if (isGraphOutOfView()) {
-      cy.viewport({ pan: { x: x, y: y } });
+    if (useDragpanOpt.value) {
+      if (isGraphOutOfView()) {
+        cy.viewport({ pan: { x: x, y: y } });
+      } else {
+        const pan = cy.pan();
+        x = pan.x;
+        y = pan.y;
+      }
     } else {
-      const pan = cy.pan();
-      x = pan.x;
-      y = pan.y;
+      if (!isGraphOutOfView()) {
+        useDragpanOpt.value = true;
+      }
+    }
+  });
+  cy.on("zoom", () => {
+    if (isGraphOutOfView()) {
+      // zoom 을 해서, graph 가 영역 밖으로 벗어난 경우, dragpan 옵션을 꺼준다. (사용하지 않음)
+      useDragpanOpt.value = false;
+    } else {
+      useDragpanOpt.value = true;
     }
   });
 

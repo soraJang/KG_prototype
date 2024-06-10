@@ -49,6 +49,10 @@ export default function useCytoscapeDragOpt() {
     return cy.getElementById(el.data(CONSTANTS.PRNT_CTGRY_ID));
   };
 
+  const isPrnt = (e: any) => {
+    return e.isParent() || e.data("isParent");
+  };
+
   const options = ref({
     grabbedNode: (node: any) => {
       // 노드를 선택할 때 마다, 이벤트를 생성해주고 있기 때문에, 노드 선택시 이전 이벤트를 지우고 시작한다. (이벤트가 복수개로 설정되버림.)
@@ -127,6 +131,7 @@ export default function useCytoscapeDragOpt() {
     createNewEdge: createNewEdge,
     getChild: getChild,
     getParent: getParent,
-    getSibling: getSibling
+    getSibling: getSibling,
+    isPrnt: isPrnt
   };
 }

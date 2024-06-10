@@ -67,8 +67,15 @@ const props = defineProps({
 
 const nuxtApp = useNuxtApp();
 const cytoscapeStore = useCytoscapeStore();
-const { option, getTarget, createNewEdge, getChild, getSibling, getParent } =
-  useCytoscapeDragOpt();
+const {
+  option,
+  getTarget,
+  createNewEdge,
+  getChild,
+  getSibling,
+  getParent,
+  isPrnt
+} = useCytoscapeDragOpt();
 const hideNodeList = ref([]);
 const filterList = ref([]);
 const mmContainer = ref(null);
@@ -93,22 +100,31 @@ onMounted(() => {
       y: 0
     }
   });
+  cy.viewport({ zoom: 0.5, pan: { x: 100, y: 100 } });
 
-  // TODO : parent-child 관계가 없으면 layout이 정상적으로 그려짐.
-  // parent 밑에 child 가 한개라도 있으면 layout 이 정상적으로 안그려짐.
-  // cy.elements().children((c) => {
-  //   if (!c.removed()) {
-  //     const pId = c.parent().data().id;
-  //     const sib = c.parent().children();
-  //
-  //     childrenBackup.value[pId] = sib;
-  //     sib.forEach((r, rI) => {
-  //         console.log("r: " + r.data().id);
-  //         r.remove();
-  //       }
-  //     });
-  //   }
-  // });
+  /**
+   * parent-child 관계가 없으면 layout이 정상적으로 그려짐.
+   * 처음에 parent - child 관계를 다 끊고 시작.
+   * parent 는 따로 저장해 두었다가, 노드를 선택할때, child 를 추가하여 화면에 그려준다.
+   */
+  cy.elements().children((c) => {
+    if (!c.removed()) {
+      const pId = c.parent().data().id;
+      const sib = c.parent().children();
+
+      childrenBackup.value[pId] = sib;
+
+      const parentEl = cy.$(`#${pId}`);
+      parentEl.data({
+        [CONSTANTS.IS_PARENT]: true,
+        [CONSTANTS.CHILD_CNT]: sib.length
+      });
+      parentEl.addClass("parentNode");
+      sib.forEach((r, rI) => {
+        r.remove();
+      });
+    }
+  });
 
   // layout 초기화
   const initLayout = cytoscapeStore.graphLayouts[props.defaultLayout];
@@ -163,11 +179,13 @@ onMounted(() => {
         el.data(CONSTANTS.PRNT_CTGRY_ID, parentData.id);
         el.data(CONSTANTS.PRNT_CTGRY_NM, parentData.label);
         el.style("display", "none");
-      } else if (el.isParent()) {
+      } else if (isPrnt(el)) {
         // 자식 노드 색상을 여기서 설정해둔다. (부모 노드와 색상 동일하게)
         // TODO : 혹은 색상 채도를 좀 낮춰서 표시 (코드가 복잡해서 보류)
         el.data("childColor", colorCode);
-        el.data().label = `${el.data().label}(${el.children().length})`;
+        el.data().label = `${el.data().label}(${
+          el.isParent() ? el.children().length : el.data(CONSTANTS.CHILD_CNT)
+        })`;
       }
     } else {
       // edge 일때
@@ -178,20 +196,20 @@ onMounted(() => {
 
   // 부모 노드의 경우 위치를 가질수 없음. 자식노드를 기준으로 부모노드의 위치가 결정됨
   // 자식노드를 position 을 통일해서 해당 위치가 부모 노드인것처럼 처리해야함.
-  // let doneParentList = [];
-  // cy.elements()
-  //   .children()
-  //   .forEach((c) => {
-  //     let parentId = c.data(CONSTANTS.PRNT_CTGRY_ID);
-  //
-  //     if (!doneParentList.includes(parentId)) {
-  //       const siblings = getSibling(cy, c);
-  //       siblings.forEach((s) => {
-  //         s.position(c.position());
-  //       });
-  //       doneParentList.push(parentId);
-  //     }
-  //   });
+  let doneParentList = [];
+  cy.elements()
+    .children()
+    .forEach((c) => {
+      let parentId = c.data(CONSTANTS.PRNT_CTGRY_ID);
+
+      if (!doneParentList.includes(parentId)) {
+        const siblings = getSibling(cy, c);
+        siblings.forEach((s) => {
+          s.position(c.position());
+        });
+        doneParentList.push(parentId);
+      }
+    });
 
   cy.elements().forEach((element: any) => {
     // 자식노드일때, 부모노드에 설정해두었던 색상코드를 일괄적용한다.
@@ -213,7 +231,7 @@ onMounted(() => {
         }
 
         // isParent인 경우 라벨 위치 센터로 + child 숨기기
-        if (element.isParent()) {
+        if (isPrnt(element)) {
           const children = element.children();
           children.style("display", "none");
           element.style("text-valign", "center");
@@ -231,7 +249,19 @@ onMounted(() => {
     cy.elements().removeClass(CONSTANTS.NOT_SELECTED);
     evtTarget.addClass(CONSTANTS.HIGHLIGHT);
 
-    if (evtTarget.isParent()) {
+    if (isPrnt(evtTarget)) {
+      if (!evtTarget.isParent() && evtTarget.data(CONSTANTS.IS_PARENT)) {
+        const oldPosition = evtTarget.position();
+
+        // 만약 자식 노드가 없는데, parent tag 가 붙어있는 경우, 자식 노드를 추가해주어야 한다.
+        const siblings = childrenBackup.value[evtTarget.data().id];
+        cy.add(siblings);
+        evtTarget.children().position(oldPosition);
+        evtTarget.data({
+          [CONSTANTS.IS_PARENT]: false,
+          [CONSTANTS.CHILD_CNT]: 0
+        });
+      }
       // isParent인 경우 라벨 위치 위로 + child 보이기
       const children = evtTarget.children();
       setChildPosition(evtTarget);
@@ -343,7 +373,7 @@ onMounted(() => {
      *  그거를 가지고 처리 필요함.
      */
 
-    if (el.isParent()) {
+    if (isPrnt(el)) {
       el.children().style("background-color", el.style("background-color"));
 
       // 상위노드의 edge 정보를 자식에도 추가
@@ -360,7 +390,7 @@ onMounted(() => {
 
 const setFilters = () => {
   filterList.value.forEach((el) => {
-    if (!el.isChild()) {
+    if (!el.isChild() || isPrnt(el)) {
       filters.value.push({
         id: el.id(),
         label: el.data().label,
@@ -372,7 +402,7 @@ const setFilters = () => {
 };
 
 const setChildPosition = (pEl: any) => {
-  if (pEl.isParent()) {
+  if (isPrnt(pEl)) {
     const pPos = pEl.position();
     const childCnt = pEl.children().length;
     const w = 50;

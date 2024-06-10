@@ -216,6 +216,7 @@ onMounted(() => {
           const children = element.children();
           children.style("display", "none");
           element.style("text-valign", "center");
+          element.style("padding", 0);
         }
       });
     }
@@ -234,6 +235,7 @@ onMounted(() => {
       // isParent인 경우 라벨 위치 위로 + child 보이기
       const children = evtTarget.children();
       evtTarget.style("text-valign", "top");
+      evtTarget.style("padding", 10);
       children.style("display", "element");
     }
 

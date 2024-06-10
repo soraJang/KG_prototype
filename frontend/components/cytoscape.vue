@@ -119,29 +119,7 @@ onMounted(() => {
   });
   cy.viewport({ zoom: 0.5, pan: { x: 100, y: 100 } });
 
-  /**
-   * parent-child 관계가 없으면 layout이 정상적으로 그려짐.
-   * 처음에 parent - child 관계를 다 끊고 시작.
-   * parent 는 따로 저장해 두었다가, 노드를 선택할때, child 를 추가하여 화면에 그려준다.
-   */
-  cy.elements().children((c) => {
-    if (!c.removed()) {
-      const pId = c.parent().data().id;
-      const sib = c.parent().children();
-
-      childrenBackup.value[pId] = sib;
-
-      const parentEl = cy.$(`#${pId}`);
-      parentEl.data({
-        [CONSTANTS.IS_PARENT]: true,
-        [CONSTANTS.CHILD_CNT]: sib.length
-      });
-      parentEl.addClass("parentNode");
-      sib.forEach((r, rI) => {
-        r.remove();
-      });
-    }
-  });
+  cyDataReset();
 
   // layout 초기화
   const initLayout = cytoscapeStore.graphLayouts[props.defaultLayout];
@@ -241,20 +219,7 @@ onMounted(() => {
     highlightedNodeId.value = [];
 
     if (evtTarget === cy) {
-      cy.elements().forEach((element: any) => {
-        if (element.isNode() || element.isEdge()) {
-          element.removeClass(CONSTANTS.HIGHLIGHT);
-          element.removeClass(CONSTANTS.NOT_SELECTED);
-        }
-
-        // isParent인 경우 라벨 위치 센터로 + child 숨기기
-        if (isPrnt(element)) {
-          const children = element.children();
-          children.style("display", "none");
-          element.style("text-valign", "center");
-          element.style("padding", 0);
-        }
-      });
+      tapReset();
     }
   });
 
@@ -433,6 +398,48 @@ const setFilters = () => {
   });
 };
 
+const tapReset = () => {
+  cy.elements().forEach((element: any) => {
+    if (element.isNode() || element.isEdge()) {
+      element.removeClass(CONSTANTS.HIGHLIGHT);
+      element.removeClass(CONSTANTS.NOT_SELECTED);
+    }
+
+    // isParent인 경우 라벨 위치 센터로 + child 숨기기
+    if (isPrnt(element)) {
+      const children = element.children();
+      children.style("display", "none");
+      element.style("text-valign", "center");
+        element.style("padding", 0);
+    }
+  });
+};
+
+const cyDataReset = () => {
+  /**
+   * parent-child 관계가 없으면 layout이 정상적으로 그려짐.
+   * 처음에 parent - child 관계를 다 끊고 시작.
+   * parent 는 따로 저장해 두었다가, 노드를 선택할때, child 를 추가하여 화면에 그려준다.
+   */
+  cy.elements().children((c) => {
+    if (!c.removed()) {
+      const pId = c.parent().data().id;
+      const sib = c.parent().children();
+
+      childrenBackup.value[pId] = sib;
+
+      const parentEl = cy.$(`#${pId}`);
+      parentEl.data({
+        [CONSTANTS.IS_PARENT]: true,
+        [CONSTANTS.CHILD_CNT]: sib.length
+      });
+      parentEl.addClass("parentNode");
+      sib.forEach((r, rI) => {
+        r.remove();
+      });
+    }
+  });
+};
 const setChildPosition = (pEl: any) => {
   if (isPrnt(pEl)) {
     const pPos = pEl.position();
@@ -525,6 +532,7 @@ const setNodeView = (id: string, isUnChecked: boolean) => {
 };
 
 const setGraphLayout = (layout: object) => {
+  tapReset();
   const layoutOptions = {
     ...layout,
     eles: refinedLayoutData
@@ -533,6 +541,7 @@ const setGraphLayout = (layout: object) => {
 };
 const layoutRun = (layoutOptions) => {
   if (cy) {
+    cyDataReset();
     cy.layout(layoutOptions).run();
   } else {
     console.error("fail");

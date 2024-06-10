@@ -46,20 +46,19 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         selector: "node.parentNode",
         style: {
           label: "data(label)",
-          width: "70",
-          height: "70",
+          width: "100",
+          height: "100",
           shape: "round-rectangle",
           "corner-radius": "50%",
           "text-valign": "center",
           "text-halign": "center",
           color: "#333",
-          "font-size": "12",
+          "font-size": "13",
           "border-color": "#333",
           "border-width": "2",
           "z-index": 11,
           "text-wrap": "wrap",
           "text-max-width": "100px",
-          "font-weight": "bold",
           "z-compound-depth": "top",
           "z-index-compare": "manual"
         }

@@ -38,8 +38,8 @@ export const useCytoscapeStore = defineStore("cytoscape", {
           "text-wrap": "wrap",
           "text-max-width": "100px",
           "font-weight": "bold",
-          "z-index": 999
-          // "z-compound-depth": "top"
+          "z-compound-depth": "top",
+          "z-index-compare": "manual"
         }
       },
       {
@@ -47,7 +47,8 @@ export const useCytoscapeStore = defineStore("cytoscape", {
         style: {
           width: "45px",
           height: "45px",
-          "font-size": "10"
+          "font-size": "10",
+          "z-compound-depth": "top"
         }
       },
       {

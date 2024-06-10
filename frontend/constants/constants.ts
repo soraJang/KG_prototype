@@ -3,5 +3,7 @@ export default {
   NOT_SELECTED: "notSelected",
   MOUSE_HOVER: "mouseHover",
   PRNT_CTGRY_ID: "prnt_ctgry_id",
-  PRNT_CTGRY_NM: "prnt_ctgry_nm"
+  PRNT_CTGRY_NM: "prnt_ctgry_nm",
+  IS_PARENT: "isParent",
+  CHILD_CNT: "childCnt"
 };

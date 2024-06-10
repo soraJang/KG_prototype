@@ -77,8 +77,15 @@ const props = defineProps({
 
 const nuxtApp = useNuxtApp();
 const cytoscapeStore = useCytoscapeStore();
-const { option, getTarget, createNewEdge, getChild, getSibling, getParent } =
-  useCytoscapeDragOpt();
+const {
+  option,
+  getTarget,
+  createNewEdge,
+  getChild,
+  getSibling,
+  getParent,
+  isPrnt
+} = useCytoscapeDragOpt();
 const hideNodeList = ref([]);
 const filterList = ref([]);
 const mmContainer = ref(null);
@@ -94,6 +101,8 @@ const tooltipStyles = ref({});
 
 useFloating(reference, floating, {});
 
+const childrenBackup = ref({});
+
 onMounted(() => {
   const cytoscape = nuxtApp.$cytoscape;
   const container = mmContainer.value;
@@ -106,6 +115,31 @@ onMounted(() => {
     pan: {
       x: 0,
       y: 0
+    }
+  });
+  cy.viewport({ zoom: 0.5, pan: { x: 100, y: 100 } });
+
+  /**
+   * parent-child 관계가 없으면 layout이 정상적으로 그려짐.
+   * 처음에 parent - child 관계를 다 끊고 시작.
+   * parent 는 따로 저장해 두었다가, 노드를 선택할때, child 를 추가하여 화면에 그려준다.
+   */
+  cy.elements().children((c) => {
+    if (!c.removed()) {
+      const pId = c.parent().data().id;
+      const sib = c.parent().children();
+
+      childrenBackup.value[pId] = sib;
+
+      const parentEl = cy.$(`#${pId}`);
+      parentEl.data({
+        [CONSTANTS.IS_PARENT]: true,
+        [CONSTANTS.CHILD_CNT]: sib.length
+      });
+      parentEl.addClass("parentNode");
+      sib.forEach((r, rI) => {
+        r.remove();
+      });
     }
   });
 
@@ -122,9 +156,6 @@ onMounted(() => {
   };
   cy.layout(layoutOptions).run();
 
-  // cy.viewport({
-  //   zoom: 0.1
-  // });
   const cdnd = cy.compoundDragAndDrop(option.value);
 
   // 여기서 node 에 대한 automove 를 설정하고 싶으나,
@@ -165,11 +196,13 @@ onMounted(() => {
         el.data(CONSTANTS.PRNT_CTGRY_ID, parentData.id);
         el.data(CONSTANTS.PRNT_CTGRY_NM, parentData.label);
         el.style("display", "none");
-      } else if (el.isParent()) {
+      } else if (isPrnt(el)) {
         // 자식 노드 색상을 여기서 설정해둔다. (부모 노드와 색상 동일하게)
         // TODO : 혹은 색상 채도를 좀 낮춰서 표시 (코드가 복잡해서 보류)
         el.data("childColor", colorCode);
-        el.data().label = `${el.data().label}(${el.children().length})`;
+        el.data().label = `${el.data().label}(${
+          el.isParent() ? el.children().length : el.data(CONSTANTS.CHILD_CNT)
+        })`;
       }
     } else {
       // edge 일때
@@ -178,24 +211,27 @@ onMounted(() => {
 
   setFilters();
 
+  // 부모 노드의 경우 위치를 가질수 없음. 자식노드를 기준으로 부모노드의 위치가 결정됨
+  // 자식노드를 position 을 통일해서 해당 위치가 부모 노드인것처럼 처리해야함.
+  let doneParentList = [];
+  cy.elements()
+    .children()
+    .forEach((c) => {
+      let parentId = c.data(CONSTANTS.PRNT_CTGRY_ID);
+
+      if (!doneParentList.includes(parentId)) {
+        const siblings = getSibling(cy, c);
+        siblings.forEach((s) => {
+          s.position(c.position());
+        });
+        doneParentList.push(parentId);
+      }
+    });
+
   cy.elements().forEach((element: any) => {
     // 자식노드일때, 부모노드에 설정해두었던 색상코드를 일괄적용한다.
     if (element.isChild()) {
       element.style("background-color", element.parent().data("childColor"));
-    }
-
-    // 부모 노드 일 때, 자식노드의 layout을 별개로 설정한다.
-    else if (element.isParent()) {
-      const children = element.children();
-      children
-        .layout({
-          name: "grid",
-          fit: true,
-          spacingFactor: 0.2,
-          rows: 3,
-          cols: 3
-        })
-        .run();
     }
   });
 
@@ -212,7 +248,7 @@ onMounted(() => {
         }
 
         // isParent인 경우 라벨 위치 센터로 + child 숨기기
-        if (element.isParent()) {
+        if (isPrnt(element)) {
           const children = element.children();
           children.style("display", "none");
           element.style("text-valign", "center");
@@ -231,9 +267,23 @@ onMounted(() => {
     cy.elements().removeClass(CONSTANTS.NOT_SELECTED);
     evtTarget.addClass(CONSTANTS.HIGHLIGHT);
 
-    if (evtTarget.isParent()) {
+    if (isPrnt(evtTarget)) {
+      if (!evtTarget.isParent() && evtTarget.data(CONSTANTS.IS_PARENT)) {
+        const oldPosition = evtTarget.position();
+
+        // 만약 자식 노드가 없는데, parent tag 가 붙어있는 경우, 자식 노드를 추가해주어야 한다.
+        const siblings = childrenBackup.value[evtTarget.data().id];
+        cy.add(siblings);
+        evtTarget.children().position(oldPosition);
+        evtTarget.data({
+          [CONSTANTS.IS_PARENT]: false,
+          [CONSTANTS.CHILD_CNT]: 0
+        });
+      }
       // isParent인 경우 라벨 위치 위로 + child 보이기
       const children = evtTarget.children();
+      setChildPosition(evtTarget);
+
       evtTarget.style("text-valign", "top");
       evtTarget.style("padding", 10);
       children.style("display", "element");
@@ -355,7 +405,7 @@ onMounted(() => {
      *  그거를 가지고 처리 필요함.
      */
 
-    if (el.isParent()) {
+    if (isPrnt(el)) {
       el.children().style("background-color", el.style("background-color"));
 
       // 상위노드의 edge 정보를 자식에도 추가
@@ -372,7 +422,7 @@ onMounted(() => {
 
 const setFilters = () => {
   filterList.value.forEach((el) => {
-    if (!el.isChild()) {
+    if (!el.isChild() || isPrnt(el)) {
       filters.value.push({
         id: el.id(),
         label: el.data().label,
@@ -381,6 +431,60 @@ const setFilters = () => {
       });
     }
   });
+};
+
+const setChildPosition = (pEl: any) => {
+  if (isPrnt(pEl)) {
+    const pPos = pEl.position();
+    const childCnt = pEl.children().length;
+    const w = 50;
+    const h = 50;
+
+    const boxSize = getSquareBoxSize(childCnt);
+    let heightSize = boxSize;
+
+    /**
+     * box 의 height Line Cnt 를 구한다.
+     * box 는 child 갯수 기준으로 정사각형에 그린다고 생각하고 구함.
+     * child 갯수가 4개면 정사각형 2*2 에 그려야함.
+     * child 갯수가 8개면 정사각형 3*3에 그려야함.
+     *
+     * 단, child 갯수가 5개나 6개일 경우, 3*3 에 그려야 하지만
+     * 맨 마지막 라인은 그릴게 없다.
+     * 그러면 실제로 사용하는? height 와 계산된 height가 달라지기 때문에 여기서 계산을 제대로 해준다.
+     * box size 는 3이지만, height 는 2가 되는 셈.
+     */
+    if (boxSize * boxSize - boxSize >= childCnt) {
+      heightSize--;
+    }
+    const wSize = w * boxSize;
+    const hSize = h * heightSize;
+
+    const X1 = pPos.x - wSize / 2;
+    const Y1 = pPos.y + hSize / 2;
+
+    let childX = 0;
+    let childY = 0;
+
+    let cnt = -1;
+    for (let hI = 0, hSize = boxSize; hI < hSize; hI++) {
+      for (let wI = 0, wSize = boxSize; wI < wSize; wI++) {
+        cnt++;
+        if (cnt >= childCnt) {
+          break;
+        }
+        childX = X1 + wI * w + w / 2;
+        childY = Y1 - (h / 2 + h * hI);
+        const c = pEl.children()[cnt];
+        c.position({ x: childX, y: childY });
+      }
+    }
+  }
+};
+
+// 정사각형 갯수를 구함.
+const getSquareBoxSize = (n) => {
+  return Math.ceil(Math.sqrt(n));
 };
 
 const isGraphOutOfView = () => {

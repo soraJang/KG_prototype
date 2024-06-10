@@ -216,6 +216,8 @@ onMounted(() => {
     if (evtTarget.isParent()) {
       // isParent인 경우 라벨 위치 위로 + child 보이기
       const children = evtTarget.children();
+      setChildPosition(evtTarget);
+
       evtTarget.style("text-valign", "top");
       children.style("display", "element");
     }
@@ -349,6 +351,60 @@ const setFilters = () => {
       });
     }
   });
+};
+
+const setChildPosition = (pEl: any) => {
+  if (pEl.isParent()) {
+    const pPos = pEl.position();
+    const childCnt = pEl.children().length;
+    const w = 50;
+    const h = 50;
+
+    const boxSize = getSquareBoxSize(childCnt);
+    let heightSize = boxSize;
+
+    /**
+     * box 의 height Line Cnt 를 구한다.
+     * box 는 child 갯수 기준으로 정사각형에 그린다고 생각하고 구함.
+     * child 갯수가 4개면 정사각형 2*2 에 그려야함.
+     * child 갯수가 8개면 정사각형 3*3에 그려야함.
+     *
+     * 단, child 갯수가 5개나 6개일 경우, 3*3 에 그려야 하지만
+     * 맨 마지막 라인은 그릴게 없다.
+     * 그러면 실제로 사용하는? height 와 계산된 height가 달라지기 때문에 여기서 계산을 제대로 해준다.
+     * box size 는 3이지만, height 는 2가 되는 셈.
+     */
+    if (boxSize * boxSize - boxSize >= childCnt) {
+      heightSize--;
+    }
+    const wSize = w * boxSize;
+    const hSize = h * heightSize;
+
+    const X1 = pPos.x - wSize / 2;
+    const Y1 = pPos.y + hSize / 2;
+
+    let childX = 0;
+    let childY = 0;
+
+    let cnt = -1;
+    for (let hI = 0, hSize = boxSize; hI < hSize; hI++) {
+      for (let wI = 0, wSize = boxSize; wI < wSize; wI++) {
+        cnt++;
+        if (cnt >= childCnt) {
+          break;
+        }
+        childX = X1 + wI * w + w / 2;
+        childY = Y1 - (h / 2 + h * hI);
+        const c = pEl.children()[cnt];
+        c.position({ x: childX, y: childY });
+      }
+    }
+  }
+};
+
+// 정사각형 갯수를 구함.
+const getSquareBoxSize = (n) => {
+  return Math.ceil(Math.sqrt(n));
 };
 
 const isGraphOutOfView = () => {

@@ -29,6 +29,45 @@
     {
       "data": {
         "group": "node",
+        "id": "type2_1",
+        "label": "type2_1",
+        "parent": "634107",
+        "color": "#08c",
+        "position": {
+          "x": 400,
+          "y": 300
+        }
+      }
+    },
+    {
+      "data": {
+        "group": "node",
+        "id": "type2_2",
+        "label": "type2_2",
+        "parent": "634107",
+        "color": "#08c",
+        "position": {
+          "x": 400,
+          "y": 300
+        }
+      }
+    },
+    {
+      "data": {
+        "group": "node",
+        "id": "type2_3",
+        "label": "type2_3",
+        "parent": "634107",
+        "color": "#08c",
+        "position": {
+          "x": 400,
+          "y": 300
+        }
+      }
+    },
+    {
+      "data": {
+        "group": "node",
         "id": "sub_01",
         "label": "sub_01",
         "parent": "625795",
@@ -156,6 +195,15 @@
         }
       }
     },
+
+    {"data": {"group": "node","id": "sub_11","label": "sub_11","parent": "637233","color": "#08c","position": {"x": 500,"y": 500}}},
+    {"data": {"group": "node","id": "sub_12","label": "sub_12","parent": "637233","color": "#08c","position": {"x": 500,"y": 500}}},
+    {"data": {"group": "node","id": "sub_13","label": "sub_13","parent": "637233","color": "#08c","position": {"x": 500,"y": 500}}},
+    {"data": {"group": "node","id": "sub_14","label": "sub_14","parent": "637233","color": "#08c","position": {"x": 500,"y": 500}}},
+    {"data": {"group": "node","id": "sub_15","label": "sub_15","parent": "637233","color": "#08c","position": {"x": 500,"y": 500}}},
+    {"data": {"group": "node","id": "sub_16","label": "sub_16","parent": "637233","color": "#08c","position": {"x": 500,"y": 500}}},
+    {"data": {"group": "node","id": "sub_17","label": "sub_17","parent": "637233","color": "#08c","position": {"x": 500,"y": 500}}},
+    {"data": {"group": "node","id": "sub_18","label": "sub_18","parent": "637233","color": "#08c","position": {"x": 500,"y": 500}}},
     {
       "data": {
         "oldEle": false,

@@ -125,18 +125,9 @@ onMounted(() => {
 
   // layout 초기화
   const initLayout = cytoscapeStore.graphLayouts[props.defaultLayout];
-  // isChild 인 node를 제외하고 layout이 적용되도록 새로 담기
-  const nodesToLayout = cy.nodes().filter((node: any) => !node.isChild());
-  const edgesToLayout = cy.edges();
-  refinedLayoutData = nodesToLayout.union(edgesToLayout);
+  layoutRun(initLayout);
 
-  const layoutOptions = {
-    ...initLayout,
-    eles: refinedLayoutData
-  };
-  cy.layout(layoutOptions).run();
-
-  const cdnd = cy.compoundDragAndDrop(option.value);
+  cy.compoundDragAndDrop(option.value);
 
   // 여기서 node 에 대한 automove 를 설정하고 싶으나,
   // 설정이 잘못되었는지 무한루프가 돌아버려서 저 아래서 각각의 node 에 추가해주기로 한다.
@@ -377,8 +368,6 @@ onMounted(() => {
       el.children().move({ parent: null });
       // 상위 노드는 더이상 사용하지 않기때문에 숨김처리 (삭제시에 상위노드가 '노드'로 남는 현상 등 오류가 있어 숨김처리 함)
       el.hide();
-
-      // layoutRun(initLayout);
     }
   });
 });
@@ -571,21 +560,22 @@ const setNodeView = (id: string, isUnChecked: boolean) => {
   el.style("text-valign", "center");
 };
 
-const setGraphLayout = (layout: object) => {
-  tapReset();
-  const layoutOptions = {
-    ...layout,
-    eles: refinedLayoutData
-  };
-  layoutRun(layoutOptions);
-};
-const layoutRun = (layoutOptions) => {
+const layoutRun = (layout: any) => {
   if (cy) {
+    // layout 변경하기 전에 data 를 reset 해준다. (부모- 자식 노드 관계 끊기 외)
     cyDataReset();
-    cy.layout(layoutOptions).run();
+
+    cy.layout({
+      ...layout,
+      eles: cy.nodes().union(cy.edges())
+    }).run();
   } else {
     console.error("fail");
   }
+};
+const setGraphLayout = (layout: object) => {
+  tapReset();
+  layoutRun(layout);
 };
 </script>
 

@@ -423,10 +423,6 @@ const setDblClickPosition = (el: any, children: any[]) => {
   }
 
   setChildPosition(el, w, h);
-
-  // children.forEach((c: any, cI) => {
-  //   // c.position(points[cI]);
-  // });
 };
 
 const setFilters = () => {

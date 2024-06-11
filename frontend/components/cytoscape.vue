@@ -99,6 +99,8 @@ const tooltipVisible = ref(false);
 const tooltipContent = ref("");
 const tooltipStyles = ref({});
 
+const useDragpanOpt = ref(true);
+
 useFloating(reference, floating, {});
 
 const childrenBackup = ref({});
@@ -189,30 +191,6 @@ onMounted(() => {
 
   setFilters();
 
-  // 부모 노드의 경우 위치를 가질수 없음. 자식노드를 기준으로 부모노드의 위치가 결정됨
-  // 자식노드를 position 을 통일해서 해당 위치가 부모 노드인것처럼 처리해야함.
-  let doneParentList = [];
-  cy.elements()
-    .children()
-    .forEach((c) => {
-      let parentId = c.data(CONSTANTS.PRNT_CTGRY_ID);
-
-      if (!doneParentList.includes(parentId)) {
-        const siblings = getSibling(cy, c);
-        siblings.forEach((s) => {
-          s.position(c.position());
-        });
-        doneParentList.push(parentId);
-      }
-    });
-
-  cy.elements().forEach((element: any) => {
-    // 자식노드일때, 부모노드에 설정해두었던 색상코드를 일괄적용한다.
-    if (element.isChild()) {
-      element.style("background-color", element.parent().data("childColor"));
-    }
-  });
-
   cy.on("tap", (event: any) => {
     let evtTarget = event.target;
 
@@ -240,18 +218,20 @@ onMounted(() => {
         const siblings = childrenBackup.value[evtTarget.data().id];
         cy.add(siblings);
         evtTarget.children().position(oldPosition);
+        evtTarget
+          .children()
+          .style("background-color", evtTarget.data("childColor"));
         evtTarget.data({
           [CONSTANTS.IS_PARENT]: false,
           [CONSTANTS.CHILD_CNT]: 0
         });
       }
       // isParent인 경우 라벨 위치 위로 + child 보이기
-      const children = evtTarget.children();
-      setChildPosition(evtTarget);
+      setChildPosition(evtTarget, 0, 0);
 
       evtTarget.style("text-valign", "top");
       evtTarget.style("padding", 10);
-      children.style("display", "element");
+      evtTarget.children().style("display", "element");
     }
 
     cy.elements().forEach((element: any) => {
@@ -346,12 +326,26 @@ onMounted(() => {
   let x = 0;
   let y = 0;
   cy.on("dragpan", () => {
-    if (isGraphOutOfView()) {
-      cy.viewport({ pan: { x: x, y: y } });
+    if (useDragpanOpt.value) {
+      if (isGraphOutOfView()) {
+        cy.viewport({ pan: { x: x, y: y } });
+      } else {
+        const pan = cy.pan();
+        x = pan.x;
+        y = pan.y;
+      }
     } else {
-      const pan = cy.pan();
-      x = pan.x;
-      y = pan.y;
+      if (!isGraphOutOfView()) {
+        useDragpanOpt.value = true;
+      }
+    }
+  });
+  cy.on("zoom", () => {
+    if (isGraphOutOfView()) {
+      // zoom 을 해서, graph 가 영역 밖으로 벗어난 경우, dragpan 옵션을 꺼준다. (사용하지 않음)
+      useDragpanOpt.value = false;
+    } else {
+      useDragpanOpt.value = true;
     }
   });
 
@@ -375,15 +369,61 @@ onMounted(() => {
 
       // 상위노드의 edge 정보를 자식에도 추가
       cy.add(createNewEdge(el.children(), getTarget(el)));
+
+      // child 노드들의 위치 특정
+      setDblClickPosition(el, el.children());
+
       // 상위-하위 연결을 끊음 (부모정보 삭제)
       el.children().move({ parent: null });
       // 상위 노드는 더이상 사용하지 않기때문에 숨김처리 (삭제시에 상위노드가 '노드'로 남는 현상 등 오류가 있어 숨김처리 함)
       el.hide();
 
-      layoutRun(initLayout);
+      // layoutRun(initLayout);
     }
   });
 });
+
+const getElPositionToNum = (el) => {
+  const { x, y } = el.renderedPosition();
+
+  const W_point = cy.width() / 2;
+  const H_point = cy.height() / 2;
+
+  if (y < H_point) {
+    return x < W_point ? 1 : 2;
+  } else {
+    return x < W_point ? 4 : 3;
+  }
+};
+const setDblClickPosition = (el: any, children: any[]) => {
+  // viewport 기준으로 el 의 위치가 1,2,3,4 분위 어디에 있는지 구한다. 그쪽으로 노드를 전개한다.
+  const elP = getElPositionToNum(el);
+
+  let w,
+    h = 0;
+
+  const addNum = 150;
+  switch (elP) {
+    case 1:
+      w = -addNum;
+      h = addNum;
+      break;
+    case 2:
+      w = addNum;
+      h = addNum;
+      break;
+    case 3:
+      w = addNum;
+      h = -addNum;
+      break;
+    case 4:
+      w = -addNum;
+      h = -addNum;
+      break;
+  }
+
+  setChildPosition(el, w, h);
+};
 
 const setFilters = () => {
   filterList.value.forEach((el) => {
@@ -440,12 +480,12 @@ const cyDataReset = () => {
     }
   });
 };
-const setChildPosition = (pEl: any) => {
+const setChildPosition = (pEl: any, addW: number, addH: number) => {
   if (isPrnt(pEl)) {
     const pPos = pEl.position();
     const childCnt = pEl.children().length;
-    const w = 50;
-    const h = 50;
+    const w = addW != 0 ? 100 : 50;
+    const h = addH != 0 ? 100 : 50;
 
     const boxSize = getSquareBoxSize(childCnt);
     let heightSize = boxSize;
@@ -483,7 +523,7 @@ const setChildPosition = (pEl: any) => {
         childX = X1 + wI * w + w / 2;
         childY = Y1 - (h / 2 + h * hI);
         const c = pEl.children()[cnt];
-        c.position({ x: childX, y: childY });
+        c.position({ x: childX + addW, y: childY + addH });
       }
     }
   }

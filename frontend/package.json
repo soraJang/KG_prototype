@@ -7,7 +7,9 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "homepage" : "https://soraJang.github.io/KG_prototype/",
+    "deploy": "gh-pages --dotfiles -d .output/public"
   },
   "dependencies": {
     "@floating-ui/vue": "^1.0.6",
@@ -19,6 +21,7 @@
     "cytoscape-dblclick": "^0.3.1",
     "cytoscape-fcose": "^2.2.0",
     "eslint": "^9.3.0",
+    "gh-pages": "^6.2.0",
     "graphology": "^0.25.4",
     "nuxt": "^3.11.2",
     "pinia": "^2.1.7",
